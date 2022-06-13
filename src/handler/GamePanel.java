@@ -1,6 +1,8 @@
 package handler;
 
 import entity.Player;
+import tile.Tile;
+import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,24 +16,24 @@ public class GamePanel extends JPanel implements Runnable {
     final int scale = 4;
     public final int tileSize = originalTileSize * scale;
 
-    final int columns = 16;
-    final int rows = 12;
+    public final int columns = 16;
+    public final int rows = 12;
 
     // 1152x768 WINDOW -> 4:3 ASPECT RATIO
     final int windowX = tileSize * columns;
     final int windowY = tileSize * rows;
 
-    int FPS = 60;
+    final int FPS = 60;
 
     // INSTANTIATE
     Thread gameThread;
+    TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Player player = new Player(this, keyH);
 
-
     public GamePanel() {
         this.setPreferredSize(new Dimension(windowX, windowY));
-        this.setBackground(Color.gray);
+        this.setBackground(Color.black);
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
@@ -41,7 +43,6 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread = new Thread(this);
         gameThread.start();
     }
-
 
     // GAME LOOP
     @Override
@@ -85,6 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2d = (Graphics2D) g;
 
         // ALL PAINT METHODS
+        tileM.draw(g2d);
         player.paint(g2d);
 
         g2d.dispose();

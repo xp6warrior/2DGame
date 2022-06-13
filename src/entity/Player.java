@@ -22,7 +22,7 @@ public class Player extends Entity {
     }
     private void setDefaultValues() {
         x = 500;
-        y = 100;
+        y = 300;
         speed = 5;
         direction = "down";
         spriteNumber = 1;
@@ -38,6 +38,7 @@ public class Player extends Entity {
             left2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left2.png")));
             right1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png")));
             right2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png")));
+
         } catch (IOException e) {
             e.printStackTrace();
         }

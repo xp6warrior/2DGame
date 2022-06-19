@@ -13,18 +13,22 @@ public class Player extends Entity {
     GamePanel gp;
     KeyHandler keyH;
 
-    public Player(GamePanel gp, KeyHandler keyH) {
+    public Player(GamePanel gp) {
         this.gp = gp;
-        this.keyH = keyH;
+        keyH = gp.keyH;
 
         setDefaultValues();
         getPlayerImage();
     }
     private void setDefaultValues() {
-        x = 500;
-        y = 300;
+        worldX = gp.tileSize * gp.map.startColumn;
+        worldY = gp.tileSize * gp.map.startRow;
+        screenX = gp.windowX / 2 - (gp.tileSize / 2);
+        screenY = gp.windowY / 2 - (gp.tileSize / 2);
+
         speed = 5;
         direction = "down";
+
         spriteNumber = 1;
         spriteCounter = 0;
     }
@@ -39,34 +43,34 @@ public class Player extends Entity {
             right1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png")));
             right2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png")));
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {e.printStackTrace();}
     }
 
     public void update() {
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
             if (keyH.up) {
-                y -= speed;
+                worldY -= speed;
                 direction = "up";
             } else if (keyH.down) {
-                y += speed;
+                worldY += speed;
                 direction = "down";
             } else if (keyH.left) {
-                x -= speed;
+                worldX -= speed;
                 direction = "left";
             } else {
-                x += speed;
+                worldX += speed;
                 direction = "right";
             }
 
             spriteCounter++;
             if (spriteCounter > 20 - speed) {
+
                 if (spriteNumber == 1) {
                     spriteNumber = 2;
                 } else if (spriteNumber == 2) {
                     spriteNumber = 1;
                 }
+
                 spriteCounter = 0;
             }
         }
@@ -106,6 +110,6 @@ public class Player extends Entity {
                 break;
         }
 
-        g2d.drawImage(img, x, y, gp.tileSize, gp.tileSize, null);
+        g2d.drawImage(img, screenX, screenY, gp.tileSize, gp.tileSize, null);
     }
 }

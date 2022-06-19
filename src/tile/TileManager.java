@@ -14,64 +14,69 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-
-        mapTileArray = new int[gp.columns][gp.rows];
-        tilesetAlpha = new Tile[4];
+        mapTileArray = new int[gp.map.columns][gp.map.rows];
+        tilesetAlpha = new Tile[6];
 
         loadTiles();
-        loadMap("/maps/mapAlpha.txt");
+        loadMap(gp.map.path);
     }
     private void loadTiles() {
         try {
+
             for (int i=0; i < tilesetAlpha.length; i++) {
                 tilesetAlpha[i] = new Tile();
             }
-            tilesetAlpha[0].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/tilesetAlpha/grass.png")));
-            tilesetAlpha[1].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/tilesetAlpha/wall.png")));
-            tilesetAlpha[2].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/tilesetAlpha/water.png")));
-            tilesetAlpha[3].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/tilesetAlpha/path.png")));
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            tilesetAlpha[0].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream( "/tiles/grass.png")));
+            tilesetAlpha[1].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/wall.png")));
+            tilesetAlpha[2].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/water.png")));
+            tilesetAlpha[3].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/path.png")));
+            tilesetAlpha[4].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dirt.png")));
+            tilesetAlpha[5].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/sand.png")));
+
+        } catch (IOException e) {e.printStackTrace();}
     }
     private void loadMap(String filePath) {
         try {
+
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
 
-            for (int row=0; row < gp.rows; row++) {
+            for (int row=0; row < gp.map.rows; row++) {
+
                 String line = br.readLine();
                 String[] indexes = line.split(" ");
 
-                for (int column=0; column < gp.columns; column++) {
+                for (int column=0; column < gp.map.columns; column++) {
                     int index = Integer.parseInt(indexes[column]);
                     mapTileArray[column][row] = index;
+
                 }
             }
 
             br.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {e.printStackTrace();}
     }
 
     public void draw(Graphics2D g2d) {
-        int x = 0;
-        int y = 0;
 
-        for (int row=0; row < gp.rows; row++) {
+        for (int row = 0; row < gp.map.rows; row++) {
 
-            for (int column=0; column < gp.columns; column++) {
+            for (int column = 0; column < gp.map.columns; column++) {
                 Tile tile = tilesetAlpha[mapTileArray[column][row]];
-                g2d.drawImage(tile.image, x, y, gp.tileSize, gp.tileSize, null);
 
-                x += gp.tileSize;
+                int worldX = column * gp.tileSize;
+                int worldY = row * gp.tileSize;
+
+                int screenX = worldX - gp.player.worldX + gp.player.screenX;
+                int screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+                if (screenX > -gp.tileSize && screenX < gp.windowX
+                    && screenY > -gp.tileSize && screenY < gp.windowY) {
+
+                    g2d.drawImage(tile.image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                }
             }
-
-            x = 0;
-            y += gp.tileSize;
         }
     }
 }

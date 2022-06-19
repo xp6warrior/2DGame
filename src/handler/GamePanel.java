@@ -1,7 +1,6 @@
 package handler;
 
 import entity.Player;
-import tile.Tile;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -9,27 +8,28 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    // WINDOW SETTINGS
+    //// WINDOW SETTINGS
     final int originalTileSize = 16;
 
     // 64x64 TILE
     final int scale = 4;
     public final int tileSize = originalTileSize * scale;
 
-    public final int columns = 16;
-    public final int rows = 12;
+    final int columns = 16;
+    final int rows = 12;
 
     // 1152x768 WINDOW -> 4:3 ASPECT RATIO
-    final int windowX = tileSize * columns;
-    final int windowY = tileSize * rows;
+    public final int windowX = tileSize * columns;
+    public final int windowY = tileSize * rows;
 
     final int FPS = 60;
 
     // INSTANTIATE
     Thread gameThread;
+    public KeyHandler keyH = new KeyHandler();
+    public MapHandler map = MapHandler.mapIsland;
+    public Player player = new Player(this);
     TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
-    Player player = new Player(this, keyH);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(windowX, windowY));
@@ -70,24 +70,28 @@ public class GamePanel extends JPanel implements Runnable {
 
                 endFrameTime += timePerFrame;
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            } catch (InterruptedException e) {e.printStackTrace();}
 
         }
     }
     void update() {
         // ALL UPDATE METHODS
         player.update();
+
     }
+    void paint(Graphics2D g2d) {
+        // ALL PAINT METHODS
+        tileM.draw(g2d);
+        player.paint(g2d);
+
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        // ALL PAINT METHODS
-        tileM.draw(g2d);
-        player.paint(g2d);
+        paint(g2d);
 
         g2d.dispose();
     }

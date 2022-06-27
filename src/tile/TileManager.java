@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class TileManager {
     GamePanel gp;
-    Tile[] tilesetAlpha;
-    int[][] mapTileArray;
+    public Tile[] tilesetAlpha;
+    public int[][] mapTileArray;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -29,7 +29,9 @@ public class TileManager {
 
             tilesetAlpha[0].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream( "/tiles/grass.png")));
             tilesetAlpha[1].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/wall.png")));
+            tilesetAlpha[1].collision = true;
             tilesetAlpha[2].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/water.png")));
+            tilesetAlpha[2].collision = true;
             tilesetAlpha[3].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/path.png")));
             tilesetAlpha[4].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dirt.png")));
             tilesetAlpha[5].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/sand.png")));

@@ -1,6 +1,6 @@
 package entity;
 
-import handler.GamePanel;
+import main.GamePanel;
 import handler.KeyHandler;
 
 import javax.imageio.ImageIO;
@@ -13,9 +13,12 @@ public class Player extends Entity {
     GamePanel gp;
     KeyHandler keyH;
 
+    boolean goldKey;
+    boolean bronzeKey;
+
     public Player(GamePanel gp) {
         this.gp = gp;
-        keyH = gp.keyH;
+        this.keyH = gp.keyH;
 
         setDefaultValues();
         getPlayerImage();
@@ -30,13 +33,18 @@ public class Player extends Entity {
         direction = "down";
 
         solidArea = new Rectangle();
-        solidArea.x = 16;
-        solidArea.y = 32;
+        defaultSolidAreaX = 16;
+        defaultSolidAreaY = 32;
+        solidArea.x = defaultSolidAreaX;
+        solidArea.y = defaultSolidAreaY;
         solidArea.width = 32;
         solidArea.height = 32;
 
         spriteNumber = 1;
         spriteCounter = 0;
+
+        goldKey = false;
+        bronzeKey = false;
     }
     private void getPlayerImage() {
         try {
@@ -52,9 +60,39 @@ public class Player extends Entity {
         } catch (IOException e) {e.printStackTrace();}
     }
 
+    private void PickUpObject(int index) {
+        if (index != 999) {
+
+            switch (gp.objHandler.objects[index].name) {
+                case "GoldKey":
+                    gp.objHandler.objects[index] = null;
+                    goldKey = true;
+                    break;
+                case "GoldDoor":
+                    if (goldKey) {
+                        gp.objHandler.objects[index] = null;
+                        goldKey = false;
+                    }
+                    break;
+                case "BronzeKey":
+                    gp.objHandler.objects[index] = null;
+                    bronzeKey = true;
+                    break;
+                case "BronzeDoor":
+                    if (bronzeKey) {
+                        gp.objHandler.objects[index] = null;
+                        bronzeKey = false;
+                    }
+                    break;
+            }
+
+        }
+    }
+
     public void update() {
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
-            // Direction
+
+            // Step 1: Find direction
             if (keyH.up) {
                 direction = "up";
             } else if (keyH.down) {
@@ -65,11 +103,13 @@ public class Player extends Entity {
                 direction = "right";
             }
 
-            // Collision
+            // Step 2: Check for collision
             collisionOn = false;
-            gp.collisionH.checkCollision(this);
+            gp.collisionH.tileCollision(this);
 
-            // Movement
+            PickUpObject(gp.collisionH.objectCollision(this));
+
+            // Step 3: Move player position
             if (!collisionOn) {
                 switch (direction) {
                     case "up": worldY -= speed; break;
@@ -79,7 +119,7 @@ public class Player extends Entity {
                 }
             }
 
-            // Animation
+            // Step 4: Animation
             spriteCounter++;
             if (spriteCounter > 20 - speed) {
 
@@ -94,7 +134,7 @@ public class Player extends Entity {
         }
     }
 
-    public void paint(Graphics2D g2d) {
+    public void draw(Graphics2D g2d) {
         BufferedImage img = null;
 
         switch (direction) {

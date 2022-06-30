@@ -1,4 +1,4 @@
-import handler.GamePanel;
+package main;
 
 import javax.swing.*;
 

@@ -1,6 +1,6 @@
 package tile;
 
-import handler.GamePanel;
+import main.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,22 +8,24 @@ import java.io.*;
 import java.util.Objects;
 
 public class TileManager {
-    GamePanel gp;
+
     public Tile[] tilesetAlpha;
     public int[][] mapTileArray;
+    GamePanel gp;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
+
         mapTileArray = new int[gp.map.columns][gp.map.rows];
-        tilesetAlpha = new Tile[6];
+        tilesetAlpha = new Tile[7];
 
         loadTiles();
         loadMap(gp.map.path);
     }
-    private void loadTiles() {
+    private void loadTiles() { // Loads the tileset
         try {
 
-            for (int i=0; i < tilesetAlpha.length; i++) {
+            for (int i = 0; i < tilesetAlpha.length; i++) {
                 tilesetAlpha[i] = new Tile();
             }
 
@@ -35,24 +37,24 @@ public class TileManager {
             tilesetAlpha[3].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/path.png")));
             tilesetAlpha[4].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dirt.png")));
             tilesetAlpha[5].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/sand.png")));
+            tilesetAlpha[6].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/tree.png")));
+            tilesetAlpha[6].collision = true;
 
         } catch (IOException e) {e.printStackTrace();}
     }
-    private void loadMap(String filePath) {
+    private void loadMap(String filePath) { // Loads the map
         try {
 
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
 
-            for (int row=0; row < gp.map.rows; row++) {
+            for (int row = 0; row < gp.map.rows; row++) {
 
                 String line = br.readLine();
                 String[] indexes = line.split(" ");
 
                 for (int column=0; column < gp.map.columns; column++) {
-                    int index = Integer.parseInt(indexes[column]);
-                    mapTileArray[column][row] = index;
-
+                    mapTileArray[column][row] = Integer.parseInt(indexes[column]);
                 }
             }
 

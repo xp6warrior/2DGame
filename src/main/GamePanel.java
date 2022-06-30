@@ -1,6 +1,10 @@
-package handler;
+package main;
 
 import entity.Player;
+import handler.CollisionHandler;
+import handler.KeyHandler;
+import handler.MapHandler;
+import handler.ObjectHandler;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -24,13 +28,15 @@ public class GamePanel extends JPanel implements Runnable {
 
     final int FPS = 60;
 
-    // INSTANTIATE
+    //// INSTANTIATE
     Thread gameThread;
     public KeyHandler keyH = new KeyHandler();
     public MapHandler map = MapHandler.mapIsland;
     public CollisionHandler collisionH = new CollisionHandler(this);
+
     public Player player = new Player(this);
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
+    public ObjectHandler objHandler = new ObjectHandler(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(windowX, windowY));
@@ -47,19 +53,17 @@ public class GamePanel extends JPanel implements Runnable {
 
     // GAME LOOP
     @Override
+    @SuppressWarnings("all")
     public void run() {
         double timePerFrame = 1000000000d / FPS; // In nanoseconds
         double endFrameTime = System.nanoTime() + timePerFrame;
 
         while (gameThread != null) {
-            // UPDATES INFORMATION
-            update();
+            update(); // Step 1: Update data
 
-            // PAINTS ONTO SCREEN
-            repaint();
+            repaint(); // Step 2: Repaint screen
 
-            // MAINTAINS STABLE FPS
-            try {
+            try { // Step 3: Maintain stable FPS
                 double remainingTime = endFrameTime - System.nanoTime();
                 remainingTime = remainingTime / 1000000; // Change to milliseconds
 
@@ -76,14 +80,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
     void update() {
-        // ALL UPDATE METHODS
         player.update();
 
     }
-    void paint(Graphics2D g2d) {
-        // ALL PAINT METHODS
+    void draw(Graphics2D g2d) {
         tileM.draw(g2d);
-        player.paint(g2d);
+        objHandler.draw(g2d);
+        player.draw(g2d);
 
     }
 
@@ -92,7 +95,7 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        paint(g2d);
+        draw(g2d);
 
         g2d.dispose();
     }

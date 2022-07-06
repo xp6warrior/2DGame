@@ -3,6 +3,6 @@ package tile;
 import java.awt.image.BufferedImage;
 
 public class Tile {
-    public BufferedImage image;
+    protected BufferedImage image;
     public boolean collision = false;
 }

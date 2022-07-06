@@ -4,7 +4,7 @@ import entity.Entity;
 import main.GamePanel;
 
 public class CollisionHandler {
-    GamePanel gp;
+    private final GamePanel gp;
 
     public CollisionHandler(GamePanel gp) {
         this.gp = gp;
@@ -13,10 +13,10 @@ public class CollisionHandler {
     public void tileCollision(Entity entity) {
 
         // Step 1: Find coordinates of each edge of entity
-        int topY = entity.worldY + entity.defaultSolidAreaY;
-        int bottomY = entity.worldY + entity.defaultSolidAreaY + entity.solidArea.height;
-        int leftX = entity.worldX + entity.defaultSolidAreaX;
-        int rightX = entity.worldX + entity.defaultSolidAreaX + entity.solidArea.width;
+        int topY = entity.worldY + entity.tileSolidAreaY;
+        int bottomY = entity.worldY + entity.tileSolidAreaY + entity.objectSolidArea.height;
+        int leftX = entity.worldX + entity.tileSolidAreaX;
+        int rightX = entity.worldX + entity.tileSolidAreaX + entity.objectSolidArea.width;
 
         // Step 2: find the columns/rows on each side of entity
         int leftColumn = leftX / gp.tileSize;
@@ -31,62 +31,62 @@ public class CollisionHandler {
             case "up":
                 topRow = (topY - entity.speed) / gp.tileSize;
 
-                tile1 = gp.tileM.mapTileArray[leftColumn][topRow];
-                tile2 = gp.tileM.mapTileArray[rightColumn][topRow];
+                tile1 = gp.tileM.mapInfo[leftColumn][topRow];
+                tile2 = gp.tileM.mapInfo[rightColumn][topRow];
                 break;
 
             case "down":
                 bottomRow = (bottomY + entity.speed) / gp.tileSize;
 
-                tile1 = gp.tileM.mapTileArray[leftColumn][bottomRow];
-                tile2 = gp.tileM.mapTileArray[rightColumn][bottomRow];
+                tile1 = gp.tileM.mapInfo[leftColumn][bottomRow];
+                tile2 = gp.tileM.mapInfo[rightColumn][bottomRow];
                 break;
 
             case "left":
                 leftColumn = (leftX - entity.speed) / gp.tileSize;
 
-                tile1 = gp.tileM.mapTileArray[leftColumn][topRow];
-                tile2 = gp.tileM.mapTileArray[leftColumn][bottomRow];
+                tile1 = gp.tileM.mapInfo[leftColumn][topRow];
+                tile2 = gp.tileM.mapInfo[leftColumn][bottomRow];
                 break;
 
             case "right":
                 rightColumn = (rightX + entity.speed) / gp.tileSize;
 
-                tile1 = gp.tileM.mapTileArray[rightColumn][topRow];
-                tile2 = gp.tileM.mapTileArray[rightColumn][bottomRow];
+                tile1 = gp.tileM.mapInfo[rightColumn][topRow];
+                tile2 = gp.tileM.mapInfo[rightColumn][bottomRow];
                 break;
         }
 
         // Step 4: Disable entity movement if nearby tiles have collision
-        entity.collisionOn = gp.tileM.tilesetAlpha[tile1].collision || gp.tileM.tilesetAlpha[tile2].collision;
+        entity.collisionOn = gp.tileM.tileSet[tile1].collision || gp.tileM.tileSet[tile2].collision;
     }
 
     public int objectCollision(Entity entity) {
         int index = 999;
 
-        entity.solidArea.x = entity.solidArea.x + entity.worldX;
-        entity.solidArea.y = entity.solidArea.y + entity.worldY;
+        entity.objectSolidArea.x = entity.objectSolidArea.x + entity.worldX;
+        entity.objectSolidArea.y = entity.objectSolidArea.y + entity.worldY;
 
         switch (entity.direction) {
             case "up":
-                entity.solidArea.y -= entity.speed;
+                entity.objectSolidArea.y -= entity.speed;
                 break;
 
             case "down":
-                entity.solidArea.y += entity.speed;
+                entity.objectSolidArea.y += entity.speed;
                 break;
 
             case "left":
-                entity.solidArea.x -= entity.speed;
+                entity.objectSolidArea.x -= entity.speed;
                 break;
 
             case "right":
-                entity.solidArea.x += entity.speed;
+                entity.objectSolidArea.x += entity.speed;
                 break;
         }
 
         for (int i = 0; i < gp.objHandler.objects.length; i++) {
-            if (gp.objHandler.objects[i] != null && entity.solidArea.intersects(gp.objHandler.objects[i].solidArea)) {
+            if (gp.objHandler.objects[i] != null && entity.objectSolidArea.intersects(gp.objHandler.objects[i].solidArea)) {
 
                 if (gp.objHandler.objects[i].collision) {
                     entity.collisionOn = true;
@@ -96,8 +96,8 @@ public class CollisionHandler {
             }
         }
 
-        entity.solidArea.x = entity.defaultSolidAreaX;
-        entity.solidArea.y = entity.defaultSolidAreaY;
+        entity.objectSolidArea.x = entity.tileSolidAreaX;
+        entity.objectSolidArea.y = entity.tileSolidAreaY;
 
         return index;
     }

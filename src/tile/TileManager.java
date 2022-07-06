@@ -1,60 +1,53 @@
 package tile;
 
+import handler.MapHandler;
 import main.GamePanel;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
 import java.util.Objects;
 
 public class TileManager {
+    public final Tile[] tileSet;
+    public final int[][] mapInfo;
 
-    public Tile[] tilesetAlpha;
-    public int[][] mapTileArray;
-    GamePanel gp;
+    private final GamePanel gp;
+    private final MapHandler mapH;
 
-    public TileManager(GamePanel gp) {
+    public TileManager(GamePanel gp, MapHandler mapH) {
         this.gp = gp;
+        this.mapH = mapH;
 
-        mapTileArray = new int[gp.map.columns][gp.map.rows];
-        tilesetAlpha = new Tile[7];
+        // Step 1: Reads mapH information on the tileSet used and the size of the map
+        mapInfo = new int[mapH.columns][mapH.rows];
+        tileSet = loadTileSet(mapH.tileSetName).tileArray;
 
-        loadTiles();
-        loadMap(gp.map.path);
+        loadMap(mapH.path);
     }
-    private void loadTiles() { // Loads the tileset
-        try {
+    private TILESET loadTileSet(String name) {
+        TILESET tileset = null;
+        
+        switch (name) {
+            case "alpha": tileset = new TILESET_Alpha(); break;
+            case "kwas": tileset = new TILESET_Kwas(); break;
+        }
 
-            for (int i = 0; i < tilesetAlpha.length; i++) {
-                tilesetAlpha[i] = new Tile();
-            }
-
-            tilesetAlpha[0].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream( "/tiles/grass.png")));
-            tilesetAlpha[1].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/wall.png")));
-            tilesetAlpha[1].collision = true;
-            tilesetAlpha[2].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/water.png")));
-            tilesetAlpha[2].collision = true;
-            tilesetAlpha[3].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/path.png")));
-            tilesetAlpha[4].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dirt.png")));
-            tilesetAlpha[5].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/sand.png")));
-            tilesetAlpha[6].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/tree.png")));
-            tilesetAlpha[6].collision = true;
-
-        } catch (IOException e) {e.printStackTrace();}
+        return tileset;
     }
-    private void loadMap(String filePath) { // Loads the map
+    private void loadMap(String filePath) {
         try {
+            // Step 2: Reads the map file, puts map information into a 2D array (mapTileArray)
 
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
 
-            for (int row = 0; row < gp.map.rows; row++) {
+            for (int row = 0; row < mapH.rows; row++) {
 
                 String line = br.readLine();
                 String[] indexes = line.split(" ");
 
-                for (int column=0; column < gp.map.columns; column++) {
-                    mapTileArray[column][row] = Integer.parseInt(indexes[column]);
+                for (int column = 0; column < mapH.columns; column++) {
+                    mapInfo[column][row] = Integer.parseInt(indexes[column]);
                 }
             }
 
@@ -64,10 +57,13 @@ public class TileManager {
 
     public void draw(Graphics2D g2d) {
 
-        for (int row = 0; row < gp.map.rows; row++) {
+        for (int row = 0; row < mapH.rows; row++) {
 
-            for (int column = 0; column < gp.map.columns; column++) {
-                Tile tile = tilesetAlpha[mapTileArray[column][row]];
+            for (int column = 0; column < mapH.columns; column++) {
+
+                // Step 3: Checks every tile if it is in player's vision. If so, it draws it
+
+                Tile tile = tileSet[mapInfo[column][row]];
 
                 int worldX = column * gp.tileSize;
                 int worldY = row * gp.tileSize;

@@ -1,5 +1,7 @@
 package entity;
 
+import handler.CollisionHandler;
+import handler.MapHandler;
 import main.GamePanel;
 import handler.KeyHandler;
 
@@ -10,35 +12,39 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Player extends Entity {
-    GamePanel gp;
-    KeyHandler keyH;
+    private final GamePanel gp;
+    private final KeyHandler keyH;
+    private final MapHandler mapH;
+    private final CollisionHandler collisionH;
 
-    boolean goldKey;
-    boolean bronzeKey;
+    public boolean goldKey;
+    public boolean bronzeKey;
 
-    public Player(GamePanel gp) {
+    public Player(GamePanel gp, KeyHandler keyH, MapHandler mapH, CollisionHandler collisionH) {
         this.gp = gp;
-        this.keyH = gp.keyH;
+        this.keyH = keyH;
+        this.mapH = mapH;
+        this.collisionH = collisionH;
 
         setDefaultValues();
         getPlayerImage();
     }
     private void setDefaultValues() {
-        worldX = gp.tileSize * gp.map.startColumn;
-        worldY = gp.tileSize * gp.map.startRow;
+        worldX = gp.tileSize * mapH.startColumn;
+        worldY = gp.tileSize * mapH.startRow;
         screenX = gp.windowX / 2 - (gp.tileSize / 2);
         screenY = gp.windowY / 2 - (gp.tileSize / 2);
 
         speed = 5;
         direction = "down";
 
-        solidArea = new Rectangle();
-        defaultSolidAreaX = 16;
-        defaultSolidAreaY = 32;
-        solidArea.x = defaultSolidAreaX;
-        solidArea.y = defaultSolidAreaY;
-        solidArea.width = 32;
-        solidArea.height = 32;
+        tileSolidAreaX = 16;
+        tileSolidAreaY = 32;
+
+        objectSolidArea.x = tileSolidAreaX;
+        objectSolidArea.y = tileSolidAreaY;
+        objectSolidArea.width = 32;
+        objectSolidArea.height = 32;
 
         spriteNumber = 1;
         spriteCounter = 0;
@@ -67,6 +73,7 @@ public class Player extends Entity {
                 case "GoldKey":
                     gp.objHandler.objects[index] = null;
                     goldKey = true;
+                    gp.ui.showMessage("Found a Golden Key!");
                     break;
                 case "GoldDoor":
                     if (goldKey) {
@@ -77,6 +84,7 @@ public class Player extends Entity {
                 case "BronzeKey":
                     gp.objHandler.objects[index] = null;
                     bronzeKey = true;
+                    gp.ui.showMessage("Found a Bronze Key!");
                     break;
                 case "BronzeDoor":
                     if (bronzeKey) {
@@ -105,9 +113,9 @@ public class Player extends Entity {
 
             // Step 2: Check for collision
             collisionOn = false;
-            gp.collisionH.tileCollision(this);
-
-            PickUpObject(gp.collisionH.objectCollision(this));
+            collisionH.tileCollision(this);
+            int objectIndex = collisionH.objectCollision(this);
+            PickUpObject(objectIndex);
 
             // Step 3: Move player position
             if (!collisionOn) {

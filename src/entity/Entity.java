@@ -9,8 +9,8 @@ public class Entity {
     public int speed;
     public String direction;
 
-    public Rectangle solidArea;
-    public int defaultSolidAreaX, defaultSolidAreaY;
+    public Rectangle objectSolidArea = new Rectangle();
+    public int tileSolidAreaX, tileSolidAreaY;
     public boolean collisionOn;
 
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;

@@ -1,22 +1,25 @@
-package handler;
+package object;
 
+import handler.MapHandler;
 import main.GamePanel;
-import object.*;
 
 import java.awt.*;
 
-public class ObjectHandler {
-    GamePanel gp;
-    public OBJ[] objects = new OBJ[4];
+public class ObjectManager {
+    public final OBJ[] objects = new OBJ[4];
 
-    public ObjectHandler(GamePanel gp) {
+    private final GamePanel gp;
+    private final MapHandler mapH;
+
+    public ObjectManager(GamePanel gp, MapHandler mapH) {
         this.gp = gp;
+        this.mapH = mapH;
 
         loadAssets();
     }
 
-    void loadAssets() {
-        if (gp.map == MapHandler.mapIsland) {
+    private void loadAssets() {
+        if (mapH == MapHandler.mapIsland) {
             OBJ bronzeKey = new OBJ_BronzeKey();
             bronzeKey.worldX = 11 * gp.tileSize;
             bronzeKey.worldY = 11 * gp.tileSize;

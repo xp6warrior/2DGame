@@ -1,9 +1,7 @@
 package main;
 
 import entity.Player;
-import handler.CollisionHandler;
-import handler.KeyHandler;
-import handler.MapHandler;
+import handler.*;
 import object.ObjectManager;
 import tile.TileManager;
 
@@ -28,17 +26,18 @@ public class GamePanel extends JPanel implements Runnable {
 
     // FPS / Map
     final int FPS = 60;
-    private final MapHandler mapH = MapHandler.mapIsland;
+    public MapHandler mapH = MapHandler.mapIsland;
 
     //// Instantiate
     private Thread gameThread;
-    private final KeyHandler keyH = new KeyHandler();
-    private final CollisionHandler collisionH = new CollisionHandler(this);
-
-    public UI ui = new UI(this);
-    public TileManager tileM = new TileManager(this, mapH);
-    public Player player = new Player(this, keyH, mapH, collisionH);
-    public ObjectManager objHandler = new ObjectManager(this, mapH);
+    public final KeyHandler keyH = new KeyHandler();
+    public final CollisionHandler collisionH = new CollisionHandler(this);
+    public final UI ui = new UI(this);
+    public final TileManager tileM = new TileManager(this);
+    public final ObjectManager objHandler = new ObjectManager(this);
+    public final Player player = new Player(this);
+    public final SoundHandler music = new SoundHandler();
+    public final SoundHandler soundEffects = new SoundHandler();
 
 
     public GamePanel() {
@@ -48,6 +47,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
 
         startGameThread();
+
+        music.setFile(mapH.musicID);
+        music.play();
+        music.loop();
     }
     private void startGameThread() {
         gameThread = new Thread(this);

@@ -20,11 +20,11 @@ public class Player extends Entity {
     public boolean goldKey;
     public boolean bronzeKey;
 
-    public Player(GamePanel gp, KeyHandler keyH, MapHandler mapH, CollisionHandler collisionH) {
+    public Player(GamePanel gp) {
         this.gp = gp;
-        this.keyH = keyH;
-        this.mapH = mapH;
-        this.collisionH = collisionH;
+        keyH = gp.keyH;
+        mapH = gp.mapH;
+        collisionH = gp.collisionH;
 
         setDefaultValues();
         getPlayerImage();
@@ -66,6 +66,7 @@ public class Player extends Entity {
         } catch (IOException e) {e.printStackTrace();}
     }
 
+
     private void PickUpObject(int index) {
         if (index != 999) {
 
@@ -74,28 +75,41 @@ public class Player extends Entity {
                     gp.objHandler.objects[index] = null;
                     goldKey = true;
                     gp.ui.showMessage("Found a Golden Key!");
+                    gp.soundEffects.setFile(1);
+                    gp.soundEffects.play();
+
                     break;
                 case "GoldDoor":
                     if (goldKey) {
                         gp.objHandler.objects[index] = null;
                         goldKey = false;
+                        gp.soundEffects.setFile(2);
+                        gp.soundEffects.play();
                     }
+
                     break;
                 case "BronzeKey":
                     gp.objHandler.objects[index] = null;
                     bronzeKey = true;
                     gp.ui.showMessage("Found a Bronze Key!");
+                    gp.soundEffects.setFile(1);
+                    gp.soundEffects.play();
+
                     break;
                 case "BronzeDoor":
                     if (bronzeKey) {
                         gp.objHandler.objects[index] = null;
                         bronzeKey = false;
+                        gp.soundEffects.setFile(2);
+                        gp.soundEffects.play();
                     }
+
                     break;
             }
 
         }
     }
+
 
     public void update() {
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
@@ -141,7 +155,6 @@ public class Player extends Entity {
             }
         }
     }
-
     public void draw(Graphics2D g2d) {
         BufferedImage img = null;
 

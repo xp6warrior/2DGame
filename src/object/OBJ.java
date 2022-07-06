@@ -8,7 +8,6 @@ public class OBJ {
     public boolean collision = false;
     public Rectangle solidArea;
     public BufferedImage image;
-
-    protected int worldX, worldY;
+    public int worldX, worldY;
 
 }

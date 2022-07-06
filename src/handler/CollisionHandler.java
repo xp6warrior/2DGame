@@ -11,7 +11,6 @@ public class CollisionHandler {
     }
 
     public void tileCollision(Entity entity) {
-
         // Step 1: Find coordinates of each edge of entity
         int topY = entity.worldY + entity.tileSolidAreaY;
         int bottomY = entity.worldY + entity.tileSolidAreaY + entity.objectSolidArea.height;

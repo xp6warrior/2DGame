@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class UI {
     private final GamePanel gp;
-    private final Font font = new Font("Arial", Font.PLAIN, 30);
+    private final Font font = new Font("Arial", Font.PLAIN, 45);
 
     private String message;
     private boolean messageOn = false;

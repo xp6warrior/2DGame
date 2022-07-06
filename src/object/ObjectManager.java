@@ -11,9 +11,9 @@ public class ObjectManager {
     private final GamePanel gp;
     private final MapHandler mapH;
 
-    public ObjectManager(GamePanel gp, MapHandler mapH) {
+    public ObjectManager(GamePanel gp) {
         this.gp = gp;
-        this.mapH = mapH;
+        mapH = gp.mapH;
 
         loadAssets();
     }

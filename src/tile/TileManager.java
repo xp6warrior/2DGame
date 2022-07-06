@@ -14,9 +14,9 @@ public class TileManager {
     private final GamePanel gp;
     private final MapHandler mapH;
 
-    public TileManager(GamePanel gp, MapHandler mapH) {
+    public TileManager(GamePanel gp) {
         this.gp = gp;
-        this.mapH = mapH;
+        mapH = gp.mapH;
 
         // Step 1: Reads mapH information on the tileSet used and the size of the map
         mapInfo = new int[mapH.columns][mapH.rows];
@@ -54,6 +54,7 @@ public class TileManager {
             br.close();
         } catch (IOException e) {e.printStackTrace();}
     }
+
 
     public void draw(Graphics2D g2d) {
 

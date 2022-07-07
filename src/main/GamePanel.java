@@ -7,6 +7,7 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -17,16 +18,23 @@ public class GamePanel extends JPanel implements Runnable {
     private final int scale = 4;
     public final int tileSize = originalTileSize * scale;
 
-    private final int columns = 16;
+    private final int columns = 20;
     private final int rows = 12;
 
-    // 1152x768 Window -> 4:3 Aspect Ratio
+    // 1280x768 Window -> 16:9 Aspect Ratio
     public final int windowX = tileSize * columns;
     public final int windowY = tileSize * rows;
 
-    // FPS / Map
+    //// Game Settings
     final int FPS = 60;
     public MapHandler mapH = MapHandler.mapIsland;
+
+    // Game States
+    public final int playState = 0;
+    public final int pauseState = 1;
+    public final int resumeState = 2;
+
+    public int currentGameState = playState;
 
     //// Instantiate
     private Thread gameThread;
@@ -39,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final SoundHandler music = new SoundHandler();
     public final SoundHandler soundEffects = new SoundHandler();
 
+    //// Debug
+    public long drawTime;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(windowX, windowY));
@@ -47,14 +57,16 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
 
         startGameThread();
-
-        music.setFile(mapH.musicID);
-        music.play();
-        music.loop();
+        startMusic();
     }
     private void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
+    }
+    private void startMusic() {
+        music.setFile(mapH.musicID);
+        music.play();
+        music.loop();
     }
 
 
@@ -66,11 +78,10 @@ public class GamePanel extends JPanel implements Runnable {
         double endFrameTime = System.nanoTime() + timePerFrame;
 
         while (gameThread != null) {
-
-            // Step 1: Update data
+            // Step 1: Update
             update();
 
-            // Step 2: Repaint screen
+            // Step 2: Paint
             repaint();
 
             // Step 3: Maintain stable FPS
@@ -87,30 +98,47 @@ public class GamePanel extends JPanel implements Runnable {
                 endFrameTime += timePerFrame;
 
             } catch (InterruptedException e) {e.printStackTrace();}
+        }
+    }
+
+    // Update and Draw methods
+    private void update() {
+
+        // Pressing the pause button
+        if (keyH.pause) {
+            currentGameState = pauseState;
+        } else if (currentGameState == pauseState){
+            currentGameState = resumeState;
+        }
+
+        // The actual pausing
+        if (currentGameState == playState) { // PLAY
+            player.update();
+
+        } else if (currentGameState == pauseState) { // PAUSE
+            music.stop();
+
+        } else if (currentGameState == resumeState) { // RESUME (fist frame after resuming)
+            music.play();
+            currentGameState = playState;
 
         }
+
     }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+        Graphics2D g2d = (Graphics2D)g;
 
-        draw(g2d);
+        long startDrawTime = System.nanoTime();
 
-        g2d.dispose();
-    }
-
-
-    // Update and Draw methods
-    private void update() {
-        player.update();
-
-    }
-    private void draw(Graphics2D g2d) {
         tileM.draw(g2d);
         objHandler.draw(g2d);
         player.draw(g2d);
         ui.draw(g2d);
 
+        drawTime = System.nanoTime() - startDrawTime;
+
+        g.dispose();
     }
 }

@@ -1,9 +1,10 @@
 package entity;
 
 import handler.CollisionHandler;
+import handler.KeyHandler;
 import handler.MapHandler;
 import main.GamePanel;
-import handler.KeyHandler;
+import main.Utility;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -54,14 +55,16 @@ public class Player extends Entity {
     }
     private void getPlayerImage() {
         try {
-            up1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up1.png")));
-            up2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up2.png")));
-            down1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down1.png")));
-            down2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down2.png")));
-            left1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left1.png")));
-            left2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left2.png")));
-            right1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png")));
-            right2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png")));
+            Utility util = new Utility(gp);
+
+            up1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up1.png"))), gp.tileSize, gp.tileSize);
+            up2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up2.png"))), gp.tileSize, gp.tileSize);
+            down1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down1.png"))), gp.tileSize, gp.tileSize);
+            down2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down2.png"))), gp.tileSize, gp.tileSize);
+            left1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left1.png"))), gp.tileSize, gp.tileSize);
+            left2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left2.png"))), gp.tileSize, gp.tileSize);
+            right1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png"))), gp.tileSize, gp.tileSize);
+            right2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png"))), gp.tileSize, gp.tileSize);
 
         } catch (IOException e) {e.printStackTrace();}
     }
@@ -83,6 +86,7 @@ public class Player extends Entity {
                     if (goldKey) {
                         gp.objHandler.objects[index] = null;
                         goldKey = false;
+                        gp.ui.showMessage("Door Unlocked!");
                         gp.soundEffects.setFile(2);
                         gp.soundEffects.play();
                     }
@@ -100,18 +104,21 @@ public class Player extends Entity {
                     if (bronzeKey) {
                         gp.objHandler.objects[index] = null;
                         bronzeKey = false;
+                        gp.ui.showMessage("Door Unlocked!");
                         gp.soundEffects.setFile(2);
                         gp.soundEffects.play();
                     }
 
                     break;
+                case "Sign":
+                    gp.ui.showMessage("Welcome to Tanzania!");
             }
 
         }
     }
 
-
     public void update() {
+
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
 
             // Step 1: Find direction
@@ -147,6 +154,7 @@ public class Player extends Entity {
 
                 if (spriteNumber == 1) {
                     spriteNumber = 2;
+
                 } else if (spriteNumber == 2) {
                     spriteNumber = 1;
                 }
@@ -189,6 +197,6 @@ public class Player extends Entity {
                 break;
         }
 
-        g2d.drawImage(img, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2d.drawImage(img, screenX, screenY, null);
     }
 }

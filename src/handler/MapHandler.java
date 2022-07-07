@@ -3,7 +3,7 @@ package handler;
 public enum MapHandler {
     mapAlpha("/maps/mapAlpha.txt", 16, 12, 7, 6, "alpha", 0),
     mapIsland("/maps/mapIsland.txt", 46, 42, 9, 20, "alpha", 0),
-    testMap("/maps/testMap.txt", 16, 12, 0, 0, "kwas", 0);
+    testMap("/maps/testMap.txt", 16, 12, 0, 0, "alpha", 0);
 
     public String path;
     public int rows;

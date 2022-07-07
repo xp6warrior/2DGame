@@ -6,13 +6,14 @@ import javax.sound.sampled.Clip;
 import java.net.URL;
 
 public class SoundHandler {
-    private final URL[] soundURL = new URL[3];
+    private final URL[] soundURL = new URL[4];
     private Clip clip;
 
     public SoundHandler() {
         soundURL[0] = getClass().getResource("/sounds/ambience.wav");
         soundURL[1] = getClass().getResource("/sounds/key.wav");
         soundURL[2] = getClass().getResource("/sounds/door.wav");
+        soundURL[3] = getClass().getResource("/sounds/footstep.wav");
     }
 
     public void setFile(int index) {
@@ -28,6 +29,10 @@ public class SoundHandler {
 
     public void play() {
         clip.start();
+    }
+
+    public void stop() {
+        clip.stop();
     }
 
     public void loop() {

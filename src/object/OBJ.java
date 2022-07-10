@@ -1,7 +1,6 @@
 package object;
 
 import main.GamePanel;
-import main.Utility;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,17 +12,21 @@ public class OBJ {
     public BufferedImage image;
     public int worldX, worldY;
 
-    protected Utility util;
+    public String message3;
+    public String message2;
+    public String message1;
 
-    public OBJ(GamePanel gp, boolean inv) {
-        if (inv) {
-            solidArea.width = 100;
-            solidArea.height = 100;
-        } else {
-            solidArea.width = gp.tileSize;
-            solidArea.height = gp.tileSize;
-        }
+    public int soundIndex;
+    public int messageTimerLength;
+    public int secondaryTimerLength;
 
-        util = new Utility(gp);
+    public OBJ(GamePanel gp) {
+        solidArea.width = gp.tileSize;
+        solidArea.height = gp.tileSize;
+    }
+
+    public OBJ(int w, int h) {
+        solidArea.width = w;
+        solidArea.height = h;
     }
 }

@@ -1,13 +1,15 @@
 package main;
 
 import entity.Player;
-import handler.*;
+import handler.CollisionHandler;
+import handler.KeyHandler;
+import handler.MapHandler;
+import handler.SoundHandler;
 import object.ObjectManager;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -27,25 +29,24 @@ public class GamePanel extends JPanel implements Runnable {
 
     //// Game Settings
     final int FPS = 60;
-    public MapHandler mapH = MapHandler.mapIsland;
 
     // Game States
     public final int playState = 0;
     public final int pauseState = 1;
     public final int resumeState = 2;
-
-    public int currentGameState = playState;
+    public final int titleState = 3;
+    public int currentGameState = titleState;
 
     //// Instantiate
-    private Thread gameThread;
-    public final KeyHandler keyH = new KeyHandler();
-    public final CollisionHandler collisionH = new CollisionHandler(this);
-    public final UI ui = new UI(this);
-    public final TileManager tileM = new TileManager(this);
-    public final ObjectManager objHandler = new ObjectManager(this);
-    public final Player player = new Player(this);
-    public final SoundHandler music = new SoundHandler();
-    public final SoundHandler soundEffects = new SoundHandler();
+    Thread gameThread;
+    public KeyHandler keyH = new KeyHandler();
+    public CollisionHandler collisionH = new CollisionHandler(this);
+    public UIManager ui = new UIManager(this);
+    public TileManager tileM = new TileManager(this);
+    public ObjectManager objHandler = new ObjectManager(this);
+    public Player player = new Player(this);
+    public SoundHandler music = new SoundHandler();
+    public SoundHandler soundEffects = new SoundHandler();
 
     //// Debug
     public long drawTime;
@@ -56,17 +57,13 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
+        tileM.switchLevel("title");
+
         startGameThread();
-        startMusic();
     }
     private void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
-    }
-    private void startMusic() {
-        music.setFile(mapH.musicID);
-        music.play();
-        music.loop();
     }
 
 
@@ -78,10 +75,26 @@ public class GamePanel extends JPanel implements Runnable {
         double endFrameTime = System.nanoTime() + timePerFrame;
 
         while (gameThread != null) {
-            // Step 1: Update
-            update();
 
-            // Step 2: Paint
+            // Pressing the pause button
+            if (keyH.pause && currentGameState == titleState) {
+                keyH.pause = false;
+                tileM.switchLevel("island");
+                currentGameState = resumeState;
+            } else if (keyH.pause && currentGameState == playState) {
+                keyH.pause = false;
+                currentGameState = pauseState;
+            } else if (keyH.pause && currentGameState == pauseState) {
+                keyH.pause = false;
+                currentGameState = resumeState;
+            }
+
+            switch (currentGameState) {
+                case playState: update(); break;
+                case pauseState: music.stop(); break;
+                case resumeState: music.play(); music.loop(); currentGameState = playState; break;
+            }
+
             repaint();
 
             // Step 3: Maintain stable FPS
@@ -103,26 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Update and Draw methods
     private void update() {
-
-        // Pressing the pause button
-        if (keyH.pause) {
-            currentGameState = pauseState;
-        } else if (currentGameState == pauseState){
-            currentGameState = resumeState;
-        }
-
-        // The actual pausing
-        if (currentGameState == playState) { // PLAY
-            player.update();
-
-        } else if (currentGameState == pauseState) { // PAUSE
-            music.stop();
-
-        } else if (currentGameState == resumeState) { // RESUME (fist frame after resuming)
-            music.play();
-            currentGameState = playState;
-
-        }
+        player.update();
 
     }
     @Override
@@ -132,13 +126,18 @@ public class GamePanel extends JPanel implements Runnable {
 
         long startDrawTime = System.nanoTime();
 
-        tileM.draw(g2d);
-        objHandler.draw(g2d);
-        player.draw(g2d);
-        ui.draw(g2d);
+        if (currentGameState != titleState) {
+            tileM.draw(g2d, currentGameState == pauseState);
+            objHandler.draw(g2d);
+            player.draw(g2d);
+            ui.draw(g2d);
+        } else {
+            tileM.draw(g2d, false);
+            ui.titleMenu(g2d);
+        }
 
         drawTime = System.nanoTime() - startDrawTime;
 
-        g.dispose();
+        g2d.dispose();
     }
 }

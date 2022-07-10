@@ -16,18 +16,38 @@ public class TileManager {
     public int[][] mapInfo;
 
     private final GamePanel gp;
-    private final MapHandler mapH;
+    public MapHandler mapH;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        mapH = gp.mapH;
+    }
 
-        // Step 1: Reads mapH information on the tileSet used and the size of the map
+    public void switchLevel(String level) {
+        switch (level) {
+            case "title": mapH = MapHandler.titleMap; break;
+            case "island": mapH = MapHandler.mapIsland; break;
+            case "alpha": mapH = MapHandler.mapAlpha; break;
+        }
+
+        gp.player.worldX = mapH.startColumn * gp.tileSize;
+        gp.player.worldY = mapH.startRow * gp.tileSize;
+
+        gp.objHandler.reloadAssets(mapH);
+
+        if (mapH.musicID != -1) {
+            if (mapH != MapHandler.mapIsland) {
+                gp.music.stop();
+            }
+            gp.music.setFile(mapH.musicID);
+            gp.music.play();
+            gp.music.loop();
+        }
+
         mapInfo = new int[mapH.columns][mapH.rows];
-
         tileSet = loadTileSet(mapH.tileSetName).tileArray;
         loadMap(mapH.path);
     }
+
 
     private TILESET loadTileSet(String name) {
         TILESET tileset = null;
@@ -63,7 +83,7 @@ public class TileManager {
 
     int animationCounter = 0;
 
-    public void draw(Graphics2D g2d) {
+    public void draw(Graphics2D g2d, boolean paused) {
 
         for (int row = 0; row < mapH.rows; row++) {
 
@@ -105,6 +125,8 @@ public class TileManager {
             }
         }
 
-        animationCounter++;
+        if (!paused) {
+            animationCounter++;
+        }
     }
 }

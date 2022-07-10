@@ -13,17 +13,19 @@ public class SoundHandler {
         soundURL[0] = getClass().getResource("/sounds/ambience.wav");
         soundURL[1] = getClass().getResource("/sounds/key.wav");
         soundURL[2] = getClass().getResource("/sounds/door.wav");
-        soundURL[3] = getClass().getResource("/sounds/footstep.wav");
+        soundURL[3] = getClass().getResource("/sounds/sign.wav");
     }
 
     public void setFile(int index) {
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[index]);
-            clip = AudioSystem.getClip();
-            clip.open(ais);
+        if (index != -1) {
+            try {
+                AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[index]);
+                clip = AudioSystem.getClip();
+                clip.open(ais);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

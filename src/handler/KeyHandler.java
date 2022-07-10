@@ -7,6 +7,7 @@ public class KeyHandler implements KeyListener {
     public boolean up, down, left, right = false;
     public boolean debug = false;
     public boolean pause = false;
+    public boolean interact = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -21,7 +22,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S: down = true; break;
             case KeyEvent.VK_D: right = true; break;
             case KeyEvent.VK_F1: debug = !debug; break;
-            case KeyEvent.VK_ESCAPE: pause = !pause; break;
+            case KeyEvent.VK_ESCAPE: pause = true; break;
+            case KeyEvent.VK_SPACE: interact = true; break;
         }
     }
 

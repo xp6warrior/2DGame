@@ -5,6 +5,7 @@ import handler.KeyHandler;
 import handler.MapHandler;
 import main.GamePanel;
 import main.Utility;
+import object.OBJ;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -21,22 +22,24 @@ public class Player extends Entity {
     public boolean goldKey;
     public boolean bronzeKey;
 
+    public int interactMsgTimer = 0;
+    private boolean timerOn = false;
+
     public Player(GamePanel gp) {
         this.gp = gp;
         keyH = gp.keyH;
-        mapH = gp.mapH;
+        mapH = gp.tileM.mapH;
         collisionH = gp.collisionH;
 
         setDefaultValues();
         getPlayerImage();
     }
     private void setDefaultValues() {
-        worldX = gp.tileSize * mapH.startColumn;
-        worldY = gp.tileSize * mapH.startRow;
         screenX = gp.windowX / 2 - (gp.tileSize / 2);
         screenY = gp.windowY / 2 - (gp.tileSize / 2);
 
-        speed = 5;
+        defaultSpeed = 5;
+        speed = defaultSpeed;
         direction = "down";
 
         tileSolidAreaX = 16;
@@ -55,69 +58,82 @@ public class Player extends Entity {
     }
     private void getPlayerImage() {
         try {
-            Utility util = new Utility(gp);
-
-            up1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up1.png"))), gp.tileSize, gp.tileSize);
-            up2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up2.png"))), gp.tileSize, gp.tileSize);
-            down1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down1.png"))), gp.tileSize, gp.tileSize);
-            down2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down2.png"))), gp.tileSize, gp.tileSize);
-            left1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left1.png"))), gp.tileSize, gp.tileSize);
-            left2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left2.png"))), gp.tileSize, gp.tileSize);
-            right1 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png"))), gp.tileSize, gp.tileSize);
-            right2 = util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png"))), gp.tileSize, gp.tileSize);
+            up1 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up1.png"))), gp.tileSize, gp.tileSize);
+            up2 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/up2.png"))), gp.tileSize, gp.tileSize);
+            down1 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down1.png"))), gp.tileSize, gp.tileSize);
+            down2 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/down2.png"))), gp.tileSize, gp.tileSize);
+            left1 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left1.png"))), gp.tileSize, gp.tileSize);
+            left2 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/left2.png"))), gp.tileSize, gp.tileSize);
+            right1 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right1.png"))), gp.tileSize, gp.tileSize);
+            right2 = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/player/right2.png"))), gp.tileSize, gp.tileSize);
 
         } catch (IOException e) {e.printStackTrace();}
     }
 
 
-    private void PickUpObject(int index) {
+    private void TouchObject(int index) {
         if (index != 999) {
+            OBJ object = gp.objHandler.objects[index];
+            int message = 0;
 
-            switch (gp.objHandler.objects[index].name) {
-                case "GoldKey":
-                    gp.objHandler.objects[index] = null;
-                    goldKey = true;
-                    gp.ui.showMessage("Found a Golden Key!");
-                    gp.soundEffects.setFile(1);
-                    gp.soundEffects.play();
+            switch (object.name) {
+                case "GoldKey": goldKey = true; message = 1; gp.objHandler.objects[index] = null; break;
+                case "BronzeKey": bronzeKey = true; message = 1; gp.objHandler.objects[index] = null; break;
 
+                case "Stairs":
+                    if (keyH.interact) {
+                        gp.tileM.switchLevel("alpha"); message = 1;
+
+                    } else {message = 2;}
                     break;
+
                 case "GoldDoor":
                     if (goldKey) {
-                        gp.objHandler.objects[index] = null;
-                        goldKey = false;
-                        gp.ui.showMessage("Door Unlocked!");
-                        gp.soundEffects.setFile(2);
-                        gp.soundEffects.play();
-                    }
+                        if (keyH.interact) {
+                            goldKey = false;
+                            gp.objHandler.objects[index] = null;
+                            message = 1;
 
-                    break;
-                case "BronzeKey":
-                    gp.objHandler.objects[index] = null;
-                    bronzeKey = true;
-                    gp.ui.showMessage("Found a Bronze Key!");
-                    gp.soundEffects.setFile(1);
-                    gp.soundEffects.play();
+                        } else {message = 2;}
 
+                    } else {message = 3;}
                     break;
+
                 case "BronzeDoor":
                     if (bronzeKey) {
-                        gp.objHandler.objects[index] = null;
-                        bronzeKey = false;
-                        gp.ui.showMessage("Door Unlocked!");
-                        gp.soundEffects.setFile(2);
-                        gp.soundEffects.play();
-                    }
+                        if (keyH.interact) {
+                            bronzeKey = false;
+                            gp.objHandler.objects[index] = null;
+                            message = 1;
+                        } else {message = 2;}
 
+                    } else {message = 3;}
                     break;
+
                 case "Sign":
-                    gp.ui.showMessage("Welcome to Tanzania!");
+                    if (keyH.interact && interactMsgTimer == 0) {
+                        keyH.interact = false; timerOn = true; message = 1;
+                    } else if (interactMsgTimer > object.secondaryTimerLength || interactMsgTimer == 0) {
+                        timerOn = false;
+                        interactMsgTimer = 0;
+                        message = 2;
+                    }
+                    break;
+            }
+
+            gp.ui.showMessage(object, message);
+
+            if (message == 1) {
+                gp.soundEffects.setFile(object.soundIndex);
+                gp.soundEffects.play();
             }
 
         }
     }
 
+
     public void update() {
+        collisionOn = false;
 
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
 
@@ -132,13 +148,28 @@ public class Player extends Entity {
                 direction = "right";
             }
 
-            // Step 2: Check for collision
-            collisionOn = false;
+            // Step 2: Check for tile collision
             collisionH.tileCollision(this);
-            int objectIndex = collisionH.objectCollision(this);
-            PickUpObject(objectIndex);
+        }
 
-            // Step 3: Move player position
+
+        // Step 3: Check for object collision (outside of if so that it's running all the time) and fixes bugs
+        int objectIndex = collisionH.objectCollision(this);
+
+        if (keyH.interact && objectIndex == 999 || interactMsgTimer > 0) { // Fixes "delayed interaction". Fixes "double-spacing objects"
+            keyH.interact = false;
+        }
+        if (objectIndex == 999) { // Resets timer when not colliding with object
+            timerOn = false;
+            interactMsgTimer = 0;
+        }
+        TouchObject(objectIndex);
+
+
+
+        if (keyH.up || keyH.down || keyH.left || keyH.right) {
+
+            // Step 4: Move player position
             if (!collisionOn) {
                 switch (direction) {
                     case "up": worldY -= speed; break;
@@ -148,7 +179,7 @@ public class Player extends Entity {
                 }
             }
 
-            // Step 4: Animation
+            // Step 5: Animation
             spriteCounter++;
             if (spriteCounter > 20 - speed) {
 
@@ -161,6 +192,11 @@ public class Player extends Entity {
 
                 spriteCounter = 0;
             }
+        }
+
+        // Step 6: Object interact timer
+        if (timerOn) {
+            interactMsgTimer++;
         }
     }
     public void draw(Graphics2D g2d) {
@@ -198,5 +234,12 @@ public class Player extends Entity {
         }
 
         g2d.drawImage(img, screenX, screenY, null);
+        // Debug
+        if (keyH.debug) {
+            g2d.setColor(Color.red);
+            g2d.drawRect(objectSolidArea.x + screenX, objectSolidArea.y + screenY, objectSolidArea.width, objectSolidArea.height);
+        } else {
+            speed = defaultSpeed;
+        }
     }
 }

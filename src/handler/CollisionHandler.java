@@ -57,7 +57,7 @@ public class CollisionHandler {
         }
 
         // Step 4: Disable entity movement if nearby tiles have collision
-        entity.collisionOn = gp.tileM.tileSet[tile1].collision || gp.tileM.tileSet[tile2].collision;
+        entity.collisionOn = gp.tileM.tileSet[tile1].collision || gp.tileM.tileSet[tile2].collision || entity.collisionOn;
     }
 
     public int objectCollision(Entity entity) {

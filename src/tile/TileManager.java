@@ -2,6 +2,7 @@ package tile;
 
 import handler.MapHandler;
 import main.GamePanel;
+import main.Util;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,7 +17,7 @@ public class TileManager {
     public int[][] mapInfo;
 
     private final GamePanel gp;
-    public MapHandler mapH;
+    private MapHandler mapH;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -29,15 +30,14 @@ public class TileManager {
             case "alpha": mapH = MapHandler.mapAlpha; break;
         }
 
-        gp.player.worldX = mapH.startColumn * gp.tileSize;
-        gp.player.worldY = mapH.startRow * gp.tileSize;
+        gp.player.worldX = mapH.startColumn * Util.tileSize;
+        gp.player.worldY = mapH.startRow * Util.tileSize;
 
         gp.objHandler.reloadAssets(mapH);
+        gp.npcHandler.reloadNPCs(mapH);
 
+        gp.music.stop();
         if (mapH.musicID != -1) {
-            if (mapH != MapHandler.mapIsland) {
-                gp.music.stop();
-            }
             gp.music.setFile(mapH.musicID);
             gp.music.play();
             gp.music.loop();
@@ -49,13 +49,13 @@ public class TileManager {
     }
 
 
-    private TILESET loadTileSet(String name) {
-        TILESET tileset = null;
+    private TSET loadTileSet(String name) {
+        TSET tileset = null;
 
         // Step 2: Gets the map's tileset
         switch (name) {
-            case "alpha": tileset = new TILESET_Alpha(gp); break;
-            case "frost": tileset = new TILESET_Frost(gp); break;
+            case "alpha": tileset = new TSET_Alpha(); break;
+            case "frost": tileset = new TSET_Frost(); break;
         }
 
         return tileset;
@@ -94,14 +94,14 @@ public class TileManager {
                 Tile tile = tileSet[mapInfo[column][row]];
                 BufferedImage img = tile.image;
 
-                int worldX = column * gp.tileSize;
-                int worldY = row * gp.tileSize;
+                int worldX = column * Util.tileSize;
+                int worldY = row * Util.tileSize;
 
                 int screenX = worldX - gp.player.worldX + gp.player.screenX;
                 int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-                if (screenX > -gp.tileSize && screenX < gp.windowX
-                    && screenY > -gp.tileSize && screenY < gp.windowY) {
+                if (screenX > -Util.tileSize && screenX < Util.windowX
+                    && screenY > -Util.tileSize && screenY < Util.windowY) {
 
                     if (tile.animationFrames != null) {
 

@@ -1,7 +1,6 @@
 package object;
 
-import main.GamePanel;
-import main.Utility;
+import main.Util;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -9,8 +8,7 @@ import java.util.Objects;
 
 public class OBJ_BronzeDoor extends OBJ {
 
-    public OBJ_BronzeDoor(GamePanel gp) {
-        super(gp);
+    public OBJ_BronzeDoor() {
         setup();
     }
 
@@ -24,14 +22,15 @@ public class OBJ_BronzeDoor extends OBJ {
         collision = true;
 
         message3 = "Requires a Bronze key!";
-        message2 = "[SPACE] to unlock";
+        message2 = "[SPACE] to Unlock";
         message1 = "Door Unlocked!";
 
         soundIndex = 2;
         messageTimerLength = 10;
+        secondaryTimerLength = 50;
 
         try {
-            image = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/bronzeDoor.png"))), solidArea.width, solidArea.height);
+            image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/bronzeDoor.png"))), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }

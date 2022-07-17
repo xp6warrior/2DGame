@@ -1,7 +1,6 @@
 package object;
 
-import main.GamePanel;
-import main.Utility;
+import main.Util;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -9,8 +8,7 @@ import java.util.Objects;
 
 public class OBJ_GoldKey extends OBJ {
 
-    public OBJ_GoldKey(GamePanel gp) {
-        super(gp);
+    public OBJ_GoldKey() {
         setup();
     }
 
@@ -26,7 +24,7 @@ public class OBJ_GoldKey extends OBJ {
         messageTimerLength = 50;
 
         try {
-            image = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/goldKey.png"))), solidArea.width, solidArea.height);
+            image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/goldKey.png"))), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }

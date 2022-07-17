@@ -1,7 +1,6 @@
 package object;
 
-import main.GamePanel;
-import main.Utility;
+import main.Util;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -9,8 +8,7 @@ import java.util.Objects;
 
 public class OBJ_Sign extends OBJ {
 
-    public OBJ_Sign(GamePanel gp) {
-        super(gp);
+    public OBJ_Sign() {
         setup();
     }
 
@@ -31,7 +29,7 @@ public class OBJ_Sign extends OBJ {
         soundIndex = 3;
 
         try {
-            image = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/sign.png"))), solidArea.width, solidArea.height);
+            image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/sign.png"))), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }

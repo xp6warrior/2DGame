@@ -1,9 +1,9 @@
 package handler;
 
 public enum MapHandler {
-    mapAlpha("/maps/mapAlpha.txt", 16, 12, 7, 6, "frost", 2),
+    mapAlpha("/maps/mapAlpha.txt", 16, 12, 7, 6, "frost", -1),
     mapIsland("/maps/mapIsland.txt", 48, 42, 9, 22, "alpha", 0),
-    testMap("/maps/testMap.txt", 16, 12, 0, 0, "alpha", 0),
+    testMap("/maps/testMap.txt", 16, 12, 0, 0, "alpha", -1),
     titleMap("/maps/titleMap.txt", 21, 13, 6, 10, "alpha", -1);
 
     public String path;

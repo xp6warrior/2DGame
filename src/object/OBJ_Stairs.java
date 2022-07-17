@@ -1,7 +1,6 @@
 package object;
 
-import main.GamePanel;
-import main.Utility;
+import main.Util;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -9,8 +8,7 @@ import java.util.Objects;
 
 public class OBJ_Stairs extends OBJ {
 
-    public OBJ_Stairs(GamePanel gp) {
-        super(gp);
+    public OBJ_Stairs() {
         setup();
     }
 
@@ -23,12 +21,14 @@ public class OBJ_Stairs extends OBJ {
         name = "Stairs";
 
         message1 = "";
-        message2 = "Roy's basement...";
+        message2 = "Roy's Basement...";
 
+        soundIndex = 2;
         messageTimerLength = 10;
+        secondaryTimerLength = 0;
 
         try {
-            image = Utility.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/stairs.png"))), solidArea.width, solidArea.height);
+            image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/stairs.png"))), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,9 +1,10 @@
 package main;
 
+import entity.Entity;
+import entity.NpcManager;
 import entity.Player;
 import handler.CollisionHandler;
 import handler.KeyHandler;
-import handler.MapHandler;
 import handler.SoundHandler;
 import object.ObjectManager;
 import tile.TileManager;
@@ -12,20 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
-
-    //// Window Settings
-    private final int originalTileSize = 16;
-
-    // 64x64 Tile
-    private final int scale = 4;
-    public final int tileSize = originalTileSize * scale;
-
-    private final int columns = 20;
-    private final int rows = 12;
-
-    // 1280x768 Window -> 16:9 Aspect Ratio
-    public final int windowX = tileSize * columns;
-    public final int windowY = tileSize * rows;
 
     //// Game Settings
     final int FPS = 60;
@@ -41,27 +28,25 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     public KeyHandler keyH = new KeyHandler();
     public CollisionHandler collisionH = new CollisionHandler(this);
+    public SoundHandler music = new SoundHandler();
+    public SoundHandler soundEffects = new SoundHandler();
     public UIManager ui = new UIManager(this);
     public TileManager tileM = new TileManager(this);
     public ObjectManager objHandler = new ObjectManager(this);
+    public NpcManager npcHandler = new NpcManager(this);
     public Player player = new Player(this);
-    public SoundHandler music = new SoundHandler();
-    public SoundHandler soundEffects = new SoundHandler();
 
     //// Debug
     public long drawTime;
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(windowX, windowY));
+        this.setPreferredSize(new Dimension(Util.windowX, Util.windowY));
         this.setBackground(Color.black);
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
         tileM.switchLevel("title");
 
-        startGameThread();
-    }
-    private void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -80,7 +65,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (keyH.pause && currentGameState == titleState) {
                 keyH.pause = false;
                 tileM.switchLevel("island");
-                currentGameState = resumeState;
+                currentGameState = playState;
             } else if (keyH.pause && currentGameState == playState) {
                 keyH.pause = false;
                 currentGameState = pauseState;
@@ -118,6 +103,10 @@ public class GamePanel extends JPanel implements Runnable {
     private void update() {
         player.update();
 
+        for (Entity npc : npcHandler.NPCs) {
+            npc.update();
+        }
+
     }
     @Override
     protected void paintComponent(Graphics g) {
@@ -126,15 +115,13 @@ public class GamePanel extends JPanel implements Runnable {
 
         long startDrawTime = System.nanoTime();
 
+        tileM.draw(g2d, currentGameState == pauseState);
         if (currentGameState != titleState) {
-            tileM.draw(g2d, currentGameState == pauseState);
             objHandler.draw(g2d);
+            npcHandler.draw(g2d);
             player.draw(g2d);
-            ui.draw(g2d);
-        } else {
-            tileM.draw(g2d, false);
-            ui.titleMenu(g2d);
         }
+        ui.draw(g2d);
 
         drawTime = System.nanoTime() - startDrawTime;
 

@@ -17,15 +17,13 @@ public class SoundHandler {
     }
 
     public void setFile(int index) {
-        if (index != -1) {
-            try {
-                AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[index]);
-                clip = AudioSystem.getClip();
-                clip.open(ais);
+        try {
+            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[index]);
+            clip = AudioSystem.getClip();
+            clip.open(ais);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -34,7 +32,9 @@ public class SoundHandler {
     }
 
     public void stop() {
-        clip.stop();
+        if (clip != null) {
+            clip.stop();
+        }
     }
 
     public void loop() {

@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class TSET {
+public abstract class TSET {
     protected Tile[] tileArray;
     protected String path;
 

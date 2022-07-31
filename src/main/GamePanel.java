@@ -104,7 +104,9 @@ public class GamePanel extends JPanel implements Runnable {
         player.update();
 
         for (Entity npc : npcHandler.NPCs) {
-            npc.update();
+            if (npc != null) {
+                npc.update();
+            }
         }
 
     }

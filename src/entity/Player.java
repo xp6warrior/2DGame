@@ -22,26 +22,30 @@ public class Player extends Entity {
 
         screenX = Util.windowX / 2 - (Util.tileSize / 2);
         screenY = Util.windowY / 2 - (Util.tileSize / 2);
-        goldKey = false;
-        bronzeKey = false;
 
-        setDefaultValues(5);
+        setDefaultValues();
+        speed = 5;
         getPlayerImage("player");
 
-        solidArea.x = 4 * Util.scale;
-        solidArea.y = 6 * Util.scale;
-        solidArea.width = Util.tileSize - (solidArea.x * 2);
-        solidArea.height = Util.tileSize - solidArea.y;
+        solidAreaXOffset = 4 * Util.scale;
+        solidAreaYOffset = 6 * Util.scale;
+        solidArea.width = Util.tileSize - (solidAreaXOffset * 2);
+        solidArea.height = Util.tileSize - solidAreaYOffset;
+
+        goldKey = false;
+        bronzeKey = false;
     }
 
 
     @Override
     public void update() {
+        // Step 1: Setting values
         collisionOn = false;
+        solidArea.x = worldX + solidAreaXOffset;
+        solidArea.y = worldY + solidAreaYOffset;
 
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
-
-            // Step 1: Find direction
+            // Step 2: Find direction
             if (keyH.up) {
                 direction = "up";
             } else if (keyH.down) {
@@ -52,16 +56,12 @@ public class Player extends Entity {
                 direction = "right";
             }
 
-            // Step 2: Check for tile collision and NPC collision
-            int remainingDistance = collisionH.tileCollision(this);
-            if (remainingDistance != 0) {
-                speed = remainingDistance;
-            }
-
+            // Step 3: Check for tile and NPC collision
+            collisionH.tileCollision(this);
             collisionH.npcCollision(this);
         }
 
-        // Step 3: Check for object collision (outside of if so that it's running all the time) and fixes bugs
+        // Step 4: Check for object collision (outside of if so that it's running all the time) and fixes bugs
         int objectIndex = collisionH.objectCollision(this);
         TouchObject(objectIndex);
         if (keyH.interact && objectIndex == 999 || interactMessageTimer > 0) { // Fixes "delayed interaction". Fixes "double-spacing objects"
@@ -70,11 +70,6 @@ public class Player extends Entity {
         if (objectIndex == 999) { // Resets timer when not colliding with object
             timerOn = false;
             interactMessageTimer = 0;
-        }
-
-        // Step 4: Object interact timer
-        if (timerOn) {
-            interactMessageTimer++;
         }
 
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
@@ -91,19 +86,22 @@ public class Player extends Entity {
             // Step 6: Animation
             spriteCounter++;
             if (spriteCounter > 20 - speed) {
-
                 if (spriteNumber == 1) {
                     spriteNumber = 2;
 
                 } else if (spriteNumber == 2) {
                     spriteNumber = 1;
                 }
-
                 spriteCounter = 0;
             }
+        } else {
+            spriteNumber = 2;
         }
 
-        speed = defaultSpeed;
+        // Step 7: Object interact timer
+        if (timerOn) {
+            interactMessageTimer++;
+        }
     }
 
 

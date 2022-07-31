@@ -21,7 +21,7 @@ public class NpcManager {
         if (mapH == MapHandler.mapIsland) {
             Entity roy = new NPC_Roy(gp);
             roy.worldX = 31 * Util.tileSize;
-            roy.worldY = 8 * Util.tileSize;
+            roy.worldY = 7 * Util.tileSize;
             NPCs[0] = roy;
 
         }
@@ -29,7 +29,6 @@ public class NpcManager {
 
     public void draw(Graphics2D g2d) {
         for (Entity npc : NPCs) {
-
             if (npc != null) {
                 npc.screenX = npc.worldX - gp.player.worldX + gp.player.screenX;
                 npc.screenY = npc.worldY - gp.player.worldY + gp.player.screenY;

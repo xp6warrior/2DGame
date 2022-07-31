@@ -5,7 +5,7 @@ import main.Util;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class OBJ {
+public abstract class OBJ {
     public String name;
     public boolean collision = false;
     public Rectangle solidArea = new Rectangle(0, 0, Util.tileSize, Util.tileSize);

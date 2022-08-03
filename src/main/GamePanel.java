@@ -1,7 +1,8 @@
 package main;
 
 import entity.Entity;
-import entity.NpcManager;
+import entity.npc.NPC;
+import entity.npc.NpcManager;
 import entity.Player;
 import handler.CollisionHandler;
 import handler.KeyHandler;
@@ -18,15 +19,15 @@ public class GamePanel extends JPanel implements Runnable {
     final int FPS = 60;
 
     // Game States
+    public final int titleState = -1;
     public final int playState = 0;
     public final int pauseState = 1;
     public final int resumeState = 2;
-    public final int titleState = 3;
-    public int currentGameState = titleState;
+    private int currentGameState = titleState;
 
     //// Instantiate
     Thread gameThread;
-    public KeyHandler keyH = new KeyHandler();
+    public KeyHandler keyH = new KeyHandler(this);
     public CollisionHandler collisionH = new CollisionHandler(this);
     public SoundHandler music = new SoundHandler();
     public SoundHandler soundEffects = new SoundHandler();
@@ -52,6 +53,18 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
+    // GameState changing
+    public int getGameState() {
+        return currentGameState;
+    }
+    public void setGameState(int state) {
+        if (currentGameState == titleState) {
+            tileM.switchLevel("island");
+        }
+        currentGameState = state;
+    }
+
+
     // Game Loop
     @Override
     @SuppressWarnings("all")
@@ -60,19 +73,6 @@ public class GamePanel extends JPanel implements Runnable {
         double endFrameTime = System.nanoTime() + timePerFrame;
 
         while (gameThread != null) {
-
-            // Pressing the pause button
-            if (keyH.pause && currentGameState == titleState) {
-                keyH.pause = false;
-                tileM.switchLevel("island");
-                currentGameState = playState;
-            } else if (keyH.pause && currentGameState == playState) {
-                keyH.pause = false;
-                currentGameState = pauseState;
-            } else if (keyH.pause && currentGameState == pauseState) {
-                keyH.pause = false;
-                currentGameState = resumeState;
-            }
 
             switch (currentGameState) {
                 case playState: update(); break;
@@ -103,7 +103,7 @@ public class GamePanel extends JPanel implements Runnable {
     private void update() {
         player.update();
 
-        for (Entity npc : npcHandler.NPCs) {
+        for (NPC npc : npcHandler.NPCs) {
             if (npc != null) {
                 npc.update();
             }

@@ -1,5 +1,7 @@
 package main;
 
+import entity.npc.NPC;
+import entity.npc.NPC_Roy;
 import object.*;
 
 import java.awt.*;
@@ -25,6 +27,9 @@ public class UIManager {
     private final BufferedImage bronzeDoor;
     private final BufferedImage sign;
     private final BufferedImage stairs;
+
+    private final BufferedImage roy;
+
     private final BufferedImage titleScreenKey;
 
     public UIManager(GamePanel gp) {
@@ -36,6 +41,8 @@ public class UIManager {
         bronzeDoor = new OBJ_BronzeDoor(90, 90).image;
         sign = new OBJ_Sign(100, 100).image;
         stairs = new OBJ_Stairs(90, 90).image;
+
+        roy = new NPC_Roy(gp).down1;
 
         titleScreenKey = new OBJ_GoldKey(150, 150).image;
     }
@@ -57,6 +64,18 @@ public class UIManager {
         }
 
         timerLength = length;
+        messageTimer = 0;
+        messageOn = true;
+    }
+
+    public void showMessage(NPC npc, String msg, int length) {
+        switch (npc.name) {
+            case "Roy": img = roy;
+        }
+
+
+        timerLength = length;
+        message = msg;
         messageTimer = 0;
         messageOn = true;
     }
@@ -127,10 +146,10 @@ public class UIManager {
         if (gp.keyH.debug) {
             debugMenu(g2d);
         }
-        if (gp.currentGameState == gp.titleState) {
+        if (gp.getGameState() == gp.titleState) {
             titleMenu(g2d);
         }
-        if (gp.currentGameState == gp.pauseState) {
+        if (gp.getGameState() == gp.pauseState) {
             pauseMenu(g2d);
         }
     }

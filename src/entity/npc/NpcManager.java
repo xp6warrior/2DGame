@@ -1,5 +1,6 @@
-package entity;
+package entity.npc;
 
+import entity.Entity;
 import handler.MapHandler;
 import main.GamePanel;
 import main.Util;
@@ -8,7 +9,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class NpcManager {
-    public final Entity[] NPCs = new Entity[1];
+    public final NPC[] NPCs = new NPC[1];
 
     private final GamePanel gp;
     public NpcManager(GamePanel gp) {
@@ -19,7 +20,7 @@ public class NpcManager {
         Arrays.fill(NPCs, null);
 
         if (mapH == MapHandler.mapIsland) {
-            Entity roy = new NPC_Roy(gp);
+            NPC roy = new NPC_Roy(gp);
             roy.worldX = 31 * Util.tileSize;
             roy.worldY = 7 * Util.tileSize;
             NPCs[0] = roy;

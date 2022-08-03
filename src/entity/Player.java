@@ -1,5 +1,6 @@
 package entity;
 
+import entity.npc.NPC;
 import handler.KeyHandler;
 import main.GamePanel;
 import main.Util;
@@ -37,7 +38,6 @@ public class Player extends Entity {
     }
 
 
-    @Override
     public void update() {
         // Step 1: Setting values
         collisionOn = false;
@@ -56,21 +56,25 @@ public class Player extends Entity {
                 direction = "right";
             }
 
-            // Step 3: Check for tile and NPC collision
+            // Step 3: Check for tile
             collisionH.tileCollision(this);
-            collisionH.npcCollision(this);
         }
 
         // Step 4: Check for object collision (outside of if so that it's running all the time) and fixes bugs
         int objectIndex = collisionH.objectCollision(this);
         TouchObject(objectIndex);
-        if (keyH.interact && objectIndex == 999 || interactMessageTimer > 0) { // Fixes "delayed interaction". Fixes "double-spacing objects"
+
+        int npcIndex = collisionH.npcCollision(this);
+        TouchNPC(npcIndex);
+
+        if (keyH.interact && objectIndex == 999 && npcIndex == 999 || interactMessageTimer > 0) { // Fixes "delayed interaction". Fixes "double-spacing objects"
             keyH.interact = false;
         }
         if (objectIndex == 999) { // Resets timer when not colliding with object
             timerOn = false;
             interactMessageTimer = 0;
         }
+
 
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
             // Step 5: Move player position
@@ -164,6 +168,28 @@ public class Player extends Entity {
                 gp.soundEffects.setFile(object.soundIndex);
                 gp.soundEffects.play();
             }
+
+        }
+    }
+
+    private void TouchNPC(int index) {
+        if (index != 999) {
+            NPC npc = gp.npcHandler.NPCs[index];
+            String message = "";
+            int messageLength = 20;
+
+            if (keyH.interact && interactMessageTimer == 0) {
+                keyH.interact = false;
+                timerOn = true;
+                message = npc.message;
+                messageLength = 80;
+            } else if (interactMessageTimer > messageLength || interactMessageTimer == 0) {
+                timerOn = false;
+                interactMessageTimer = 0;
+                message = "space";
+            }
+
+            gp.ui.showMessage(npc, message, messageLength);
 
         }
     }

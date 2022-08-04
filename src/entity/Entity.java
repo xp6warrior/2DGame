@@ -25,7 +25,12 @@ public abstract class Entity {
     protected int solidAreaXOffset;
     protected int solidAreaYOffset;
 
-    protected void setDefaultValues() {
+    public Entity(String imageDirName) {
+        setDefaultValues();
+        getEntityImage(imageDirName);
+    }
+
+    private void setDefaultValues() {
         speed = 2;
         direction = "down";
 
@@ -37,7 +42,7 @@ public abstract class Entity {
         spriteNumber = 1;
         spriteCounter = 0;
     }
-    protected void getPlayerImage(String path) {
+    private void getEntityImage(String path) {
         try {
             up1 = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/entities/"+path+"/up1.png"))), Util.tileSize, Util.tileSize);
             up2 = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/entities/"+path+"/up2.png"))), Util.tileSize, Util.tileSize);

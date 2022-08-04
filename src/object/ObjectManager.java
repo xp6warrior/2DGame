@@ -52,6 +52,7 @@ public class ObjectManager {
             sign.worldY = 12 * Util.tileSize;
             sign.solidArea.x = sign.worldX;
             sign.solidArea.y = sign.worldY;
+            sign.message1 = OBJ_Sign.writings[0];
             objects[4] = sign;
 
             OBJ_Stairs stairs = new OBJ_Stairs();
@@ -66,6 +67,7 @@ public class ObjectManager {
             sign2.worldY = 27 * Util.tileSize;
             sign2.solidArea.x = sign2.worldX;
             sign2.solidArea.y = sign2.worldY;
+            sign2.message1 = OBJ_Sign.writings[1];
             objects[6] = sign2;
 
         }

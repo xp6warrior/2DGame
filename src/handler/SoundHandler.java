@@ -21,7 +21,6 @@ public class SoundHandler {
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[index]);
             clip = AudioSystem.getClip();
             clip.open(ais);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

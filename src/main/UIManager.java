@@ -1,8 +1,7 @@
 package main;
 
 import entity.npc.NPC;
-import entity.npc.NPC_Roy;
-import object.*;
+import object.OBJ;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,13 +11,6 @@ public class UIManager {
     private final Font arial_45 = new Font("Arial", Font.PLAIN, 45);
     private final Font arial_80 = new Font("Arial", Font.PLAIN, 80);
     private final Font arial_20 = new Font("Arial", Font.PLAIN, 30);
-
-    // Message
-    private String message;
-    private boolean messageOn = false;
-    private int messageTimer = 0;
-    private BufferedImage img;
-    private int timerLength;
 
     // Display
     private final BufferedImage goldKey;
@@ -35,50 +27,18 @@ public class UIManager {
     public UIManager(GamePanel gp) {
         this.gp = gp;
 
-        goldKey = new OBJ_GoldKey(100, 100).image;
-        bronzeKey = new OBJ_BronzeKey(100, 100).image;
-        goldDoor = new OBJ_GoldDoor(90, 90).image;
-        bronzeDoor = new OBJ_BronzeDoor(90, 90).image;
-        sign = new OBJ_Sign(100, 100).image;
-        stairs = new OBJ_Stairs(90, 90).image;
+        goldKey = OBJ.getObjectIcon("goldKey", 100, 100);
+        bronzeKey = OBJ.getObjectIcon("bronzeKey", 100, 100);
+        goldDoor = OBJ.getObjectIcon("goldDoor", 90, 90);
+        bronzeDoor = OBJ.getObjectIcon("bronzeDoor", 90, 90);
+        sign = OBJ.getObjectIcon("sign", 100, 100);
+        stairs = OBJ.getObjectIcon("stairs", 90, 90);
 
-        roy = new NPC_Roy(gp).down1;
+        roy = NPC.getNPCIcon("roy", 90, 90);
 
-        titleScreenKey = new OBJ_GoldKey(150, 150).image;
+        titleScreenKey = OBJ.getObjectIcon("goldKey", 150, 150);
     }
 
-    public void showMessage(OBJ object, int msg, int length) {
-        switch (object.name) {
-            case "GoldDoor": img = goldDoor; break;
-            case "GoldKey": img = goldKey; break;
-            case "BronzeDoor": img = bronzeDoor; break;
-            case "BronzeKey": img = bronzeKey; break;
-            case "Sign": img = sign; break;
-            case "Stairs": img = stairs; break;
-        }
-
-        switch (msg) {
-            case 1: message = object.message1; break;
-            case 2: message = object.message2; break;
-            case 3: message = object.message3; break;
-        }
-
-        timerLength = length;
-        messageTimer = 0;
-        messageOn = true;
-    }
-
-    public void showMessage(NPC npc, String msg, int length) {
-        switch (npc.name) {
-            case "Roy": img = roy;
-        }
-
-
-        timerLength = length;
-        message = msg;
-        messageTimer = 0;
-        messageOn = true;
-    }
 
     private void displayHeldItem(Graphics2D g2d) {
         if (gp.player.goldKey) {
@@ -88,22 +48,58 @@ public class UIManager {
             g2d.drawImage(bronzeKey, Util.windowX - 100 - 10, Util.windowY - 100 - 10, null);
         }
     }
-    private void displayMessage(Graphics2D g2d) {
-        g2d.setFont(arial_45);
-        g2d.setColor(Color.white);
 
-        if (messageOn) {
+    private String message;
+    private BufferedImage img;
+    public int timer;
+    private int timerLength = 0;
+    public boolean displayTouchingObject = false;
+    public void setTouching(OBJ object, int msgIndex) {
+        switch (object.name) {
+            case "goldDoor": img = goldDoor; break;
+            case "goldKey": img = goldKey; break;
+            case "bronzeDoor": img = bronzeDoor; break;
+            case "bronzeKey": img = bronzeKey; break;
+            case "sign": img = sign; break;
+            case "stairs": img = stairs; break;
+        }
+
+        switch (msgIndex) {
+            case 1: message = object.message1; timerLength = object.messageTimerLength; timer = 0; break;
+            case 2: message = object.message2; timer = -10; break;
+            case 3: message = object.message3; timer = -10; break;
+        }
+
+    }
+    public void setTouching(NPC npc, int msgIndex) {
+        switch (npc.name) {
+            case "roy": img = roy; break;
+        }
+
+        switch (msgIndex) {
+            case 1: message = npc.message1; timerLength = npc.messageTimerLength; timer = 0; break;
+            case 2: message = npc.message2; timer = -10; break;
+        }
+
+    }
+    private void touchingObject(Graphics2D g2d) {
+        timer++;
+
+        if (timer <= timerLength) {
+            g2d.setFont(arial_45);
+            g2d.setColor(Color.white);
+
             g2d.drawString(message, 130, Util.windowY - 50);
             g2d.drawImage(img, 65 - img.getWidth() / 2, Util.windowY - 65 - img.getHeight() / 2, null);
-
-            messageTimer++;
-
-            if (messageTimer > timerLength) {
-                messageOn = false;
-                messageTimer = 0;
-            }
+        } else {
+            timer = 0;
+            timerLength = 0;
+            displayTouchingObject = false;
         }
+
     }
+
+    public boolean displayPauseMenu = false;
     private void pauseMenu(Graphics2D g2d) {
         g2d.setFont(arial_80);
         g2d.setColor(Color.yellow);
@@ -113,14 +109,17 @@ public class UIManager {
         int[] stringPos = Util.getStringCenterPosition(g2d, msg);
         g2d.drawString(msg, stringPos[0], stringPos[1] - 150);
     }
+
+    public boolean displayDebugMenu = false;
     private void debugMenu(Graphics2D g2d) {
         g2d.setFont(arial_20);
         g2d.setColor(Color.white);
 
-        g2d.drawString("Draw Time: " + gp.drawTime, Util.windowX - 500, Util.windowY - 90);
-        g2d.drawString("Secondary Object Timer: " + gp.player.interactMessageTimer, Util.windowX - 500, Util.windowY - 50);
-        g2d.drawString("Primary Object Timer: " + messageTimer, Util.windowX - 500, Util.windowY - 10);
+        g2d.drawString("Draw Time: " + gp.drawTime, Util.windowX - 500, Util.windowY - 50);
+        g2d.drawString("Object Timer: " + timer, Util.windowX - 500, Util.windowY - 10);
     }
+
+    public boolean displayTitleMenu = true;
     public void titleMenu(Graphics2D g2d) {
         String msg = "Roy's Island";
         String msg2 = "Press [ESC] to continue";
@@ -141,15 +140,17 @@ public class UIManager {
 
     public void draw(Graphics2D g2d) {
         displayHeldItem(g2d);
-        displayMessage(g2d);
 
-        if (gp.keyH.debug) {
+        if (displayTouchingObject) {
+            touchingObject(g2d);
+        }
+        if (displayDebugMenu) {
             debugMenu(g2d);
         }
-        if (gp.getGameState() == gp.titleState) {
+        if (displayTitleMenu) {
             titleMenu(g2d);
         }
-        if (gp.getGameState() == gp.pauseState) {
+        if (displayPauseMenu) {
             pauseMenu(g2d);
         }
     }

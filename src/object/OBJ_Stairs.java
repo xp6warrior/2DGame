@@ -7,30 +7,15 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class OBJ_Stairs extends OBJ {
-
     public OBJ_Stairs() {
-        setup();
-    }
+        name = "stairs";
 
-    public OBJ_Stairs(int w, int h) {
-        super(w, h);
-        setup();
-    }
-
-    private void setup() {
-        name = "Stairs";
-
-        message1 = "";
         message2 = "Roy's Basement...";
+        message1 = "";
+        messageTimerLength = 0;
 
         soundIndex = 2;
-        messageTimerLength = 10;
-        secondaryTimerLength = 0;
 
-        try {
-            image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/objects/stairs.png"))), width, height);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        image = getObjectIcon(name, Util.tileSize, Util.tileSize);
     }
 }

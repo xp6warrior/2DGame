@@ -1,24 +1,44 @@
 package entity.npc;
 
 import entity.Entity;
+import main.Util;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
-public class NPC extends Entity {
+public abstract class NPC extends Entity {
+    public String name;
+    public String message2 = "[SPACE] to talk";
+    public String message1;
+    public int messageTimerLength;
+    public boolean stationaryDebuff = false;
+
     private final Random AI = new Random();
     private int randomDirection = -1;
     private int AiTimer = 0;
 
-    public String name;
-    public String message;
+    public NPC(String imageDirName) {
+        super("npcs/"+ imageDirName);
+    }
+
+    public static BufferedImage getNPCIcon(String name, int width, int height) {
+        try {
+            return Util.scaleImage(ImageIO.read(Objects.requireNonNull(NPC.class.getClassLoader().getResourceAsStream("entities/npcs/"+name+"/down1.png"))), width, height);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void update() {
-        // Step 1: Setting values
         collisionOn = false;
         solidArea.x = worldX;
         solidArea.y = worldY;
 
-        // Step 2: Find AI direction
+        // 2. Find AI direction
         if (AiTimer == 0) { // Start (waits 200 frames)
             AiTimer = 1;
         } else if (AiTimer == 170) { // Moves (50 frames)
@@ -37,11 +57,11 @@ public class NPC extends Entity {
             case 3: direction = "right"; break;
         }
 
-        // Step 3: Collision
+        // 3. Collision
         collisionH.tileCollision(this);
         collisionH.npcPlayerCollision(this);
 
-        // Step 4: Move player position
+        // 4. Move NPC position
         if (!collisionOn && randomDirection != -1) {
             switch (direction) {
                 case "up": worldY -= speed; break;
@@ -50,7 +70,7 @@ public class NPC extends Entity {
                 case "right": worldX += speed; break;
             }
 
-            // Step 5: Animation
+            // 5. Animation
             if (spriteCounter > 20 - speed) {
                 if (spriteNumber == 1) {
                     spriteNumber = 2;

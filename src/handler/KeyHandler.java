@@ -6,10 +6,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-    public boolean up, down, left, right = false;
-    public boolean debug = false;
-    public boolean interact = false;
     private final GamePanel gp;
+
+    public boolean up, down, left, right = false;
+    public boolean interact = false;
 
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
@@ -27,14 +27,16 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_A: left = true; break;
             case KeyEvent.VK_S: down = true; break;
             case KeyEvent.VK_D: right = true; break;
-            case KeyEvent.VK_F1: debug = !debug; break;
+            case KeyEvent.VK_F1: gp.ui.displayDebugMenu = !gp.ui.displayDebugMenu; break;
+
             case KeyEvent.VK_ESCAPE:
-                if (gp.getGameState() + 1 == 3) {
-                    gp.setGameState(0);
-                } else {
-                    gp.setGameState(gp.getGameState()+1);
+                int gameState = gp.getGameState() + 1;
+                if (gameState == gp.pauseState + 1) {
+                    gameState = gp.playState;
                 }
+                gp.setGameState(gameState);
                 break;
+
             case KeyEvent.VK_SPACE: interact = true; break;
         }
     }

@@ -10,24 +10,23 @@ public class Player extends Entity {
     private final GamePanel gp;
     private final KeyHandler keyH;
 
+    // Inventory
     public boolean goldKey;
     public boolean bronzeKey;
 
-    public int interactMessageTimer = 0;
-    private boolean timerOn = false;
-
     public Player(GamePanel gp) {
+        super("player");
+
         this.gp = gp;
         this.keyH = gp.keyH;
         this.collisionH = gp.collisionH;
 
+        // 1. Finds constant screen value (middle of screen)
         screenX = Util.windowX / 2 - (Util.tileSize / 2);
         screenY = Util.windowY / 2 - (Util.tileSize / 2);
 
-        setDefaultValues();
+        // 2. Overrides to default values
         speed = 5;
-        getPlayerImage("player");
-
         solidAreaXOffset = 4 * Util.scale;
         solidAreaYOffset = 6 * Util.scale;
         solidArea.width = Util.tileSize - (solidAreaXOffset * 2);
@@ -39,13 +38,12 @@ public class Player extends Entity {
 
 
     public void update() {
-        // Step 1: Setting values
         collisionOn = false;
         solidArea.x = worldX + solidAreaXOffset;
         solidArea.y = worldY + solidAreaYOffset;
 
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
-            // Step 2: Find direction
+            // 1. Find direction
             if (keyH.up) {
                 direction = "up";
             } else if (keyH.down) {
@@ -56,28 +54,22 @@ public class Player extends Entity {
                 direction = "right";
             }
 
-            // Step 3: Check for tile
+            // 2. Check for tile collision
             collisionH.tileCollision(this);
         }
 
-        // Step 4: Check for object collision (outside of if so that it's running all the time) and fixes bugs
+        // 3. Object and NPC collision
         int objectIndex = collisionH.objectCollision(this);
-        TouchObject(objectIndex);
-
         int npcIndex = collisionH.npcCollision(this);
-        TouchNPC(npcIndex);
-
-        if (keyH.interact && objectIndex == 999 && npcIndex == 999 || interactMessageTimer > 0) { // Fixes "delayed interaction". Fixes "double-spacing objects"
+        if (objectIndex == 999 && keyH.interact && npcIndex == 999) {
             keyH.interact = false;
         }
-        if (objectIndex == 999) { // Resets timer when not colliding with object
-            timerOn = false;
-            interactMessageTimer = 0;
-        }
 
+        TouchObject(objectIndex);
+        TouchNPC(npcIndex);
 
         if (keyH.up || keyH.down || keyH.left || keyH.right) {
-            // Step 5: Move player position
+            // 5. Move player position
             if (!collisionOn) {
                 switch (direction) {
                     case "up": worldY -= speed; break;
@@ -87,7 +79,7 @@ public class Player extends Entity {
                 }
             }
 
-            // Step 6: Animation
+            // 6. Animation
             spriteCounter++;
             if (spriteCounter > 20 - speed) {
                 if (spriteNumber == 1) {
@@ -101,70 +93,62 @@ public class Player extends Entity {
         } else {
             spriteNumber = 2;
         }
-
-        // Step 7: Object interact timer
-        if (timerOn) {
-            interactMessageTimer++;
-        }
     }
 
 
     private void TouchObject(int index) {
         if (index != 999) {
             OBJ object = gp.objHandler.objects[index];
-            int message = 0; // Prevents sound effect playing many times stationary objects (sign)
-            int messageLength = object.messageTimerLength;
+            int messageIndex = 0;
+
+            if (!gp.ui.displayTouchingObject) { object.stationaryDebuff = false; }
 
             switch (object.name) {
-                case "GoldKey": goldKey = true; message = 1; gp.objHandler.objects[index] = null; break;
-                case "BronzeKey": bronzeKey = true; message = 1; gp.objHandler.objects[index] = null; break;
+                case "goldKey": goldKey = true; messageIndex = 1; gp.objHandler.objects[index] = null; break;
+                case "bronzeKey": bronzeKey = true; messageIndex = 1; gp.objHandler.objects[index] = null; break;
 
-                case "Stairs":
-                    if (keyH.interact) {
-                        gp.tileM.switchLevel("alpha");
-                        message = 1;
-                        messageLength = object.secondaryTimerLength;
-                    } else {message = 2;}
-                    break;
-
-                case "GoldDoor":
+                case "goldDoor":
                     if (goldKey) {
                         if (keyH.interact) {
                             goldKey = false;
-                            message = 1;
-                            messageLength = object.secondaryTimerLength;
                             gp.objHandler.objects[index] = null;
-                        } else {message = 2;}
-                    } else {message = 3;}
+                            messageIndex = 1;
+                        } else { messageIndex = 2; }
+                    } else { messageIndex = 3; }
                     break;
 
-                case "BronzeDoor":
+                case "bronzeDoor":
                     if (bronzeKey) {
                         if (keyH.interact) {
                             bronzeKey = false;
-                            message = 1;
-                            messageLength = object.secondaryTimerLength;
                             gp.objHandler.objects[index] = null;
-                        } else {message = 2;}
-                    } else {message = 3;}
+                            messageIndex = 1;
+                        } else { messageIndex = 2; }
+                    } else { messageIndex = 3; }
                     break;
 
-                case "Sign":
-                    if (keyH.interact && interactMessageTimer == 0) {
-                        keyH.interact = false;
-                        timerOn = true;
-                        message = 1;
-                        messageLength = object.secondaryTimerLength;
-                    } else if (interactMessageTimer > object.secondaryTimerLength || interactMessageTimer == 0) {
-                        timerOn = false;
-                        interactMessageTimer = 0;
-                        message = 2;
+                case "stairs":
+                    if (keyH.interact) {
+                        gp.tileM.switchLevel("alpha");
+                        messageIndex = 1;
+                    } else { messageIndex = 2; }
+                    break;
+
+                case "sign":
+                    if (!object.stationaryDebuff) {
+                        if (keyH.interact) {
+                            keyH.interact = false;
+                            object.stationaryDebuff = true;
+                            messageIndex = 1;
+                        } else { messageIndex = 2; }
                     }
                     break;
             }
 
-            gp.ui.showMessage(object, message, messageLength);
-            if (message == 1) {
+            gp.ui.setTouching(object, messageIndex);
+            gp.ui.displayTouchingObject = true;
+
+            if (messageIndex == 1) {
                 gp.soundEffects.setFile(object.soundIndex);
                 gp.soundEffects.play();
             }
@@ -175,21 +159,24 @@ public class Player extends Entity {
     private void TouchNPC(int index) {
         if (index != 999) {
             NPC npc = gp.npcHandler.NPCs[index];
-            String message = "";
-            int messageLength = 20;
+            int messageIndex = 0;
 
-            if (keyH.interact && interactMessageTimer == 0) {
-                keyH.interact = false;
-                timerOn = true;
-                message = npc.message;
-                messageLength = 80;
-            } else if (interactMessageTimer > messageLength || interactMessageTimer == 0) {
-                timerOn = false;
-                interactMessageTimer = 0;
-                message = "space";
+            if (!gp.ui.displayTouchingObject) { npc.stationaryDebuff = false; }
+
+            switch (npc.name) {
+                case "roy":
+                    if (!npc.stationaryDebuff) {
+                        if (keyH.interact) {
+                            keyH.interact = false;
+                            npc.stationaryDebuff = true;
+                            messageIndex = 1;
+                        } else { messageIndex = 2; }
+                    }
+                    break;
             }
 
-            gp.ui.showMessage(npc, message, messageLength);
+            gp.ui.setTouching(npc, messageIndex);
+            gp.ui.displayTouchingObject = true;
 
         }
     }

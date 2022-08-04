@@ -84,11 +84,8 @@ public class TileManager {
     int animationCounter = 0;
 
     public void draw(Graphics2D g2d, boolean paused) {
-
         for (int row = 0; row < mapH.rows; row++) {
-
             for (int column = 0; column < mapH.columns; column++) {
-
                 // Step 4: Checks every tile if it is in player's vision. If so, it draws it
 
                 Tile tile = tileSet[mapInfo[column][row]];

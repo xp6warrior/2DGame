@@ -2,8 +2,11 @@ package object;
 
 import main.Util;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 public abstract class OBJ {
     public String name;
@@ -12,17 +15,17 @@ public abstract class OBJ {
     public BufferedImage image;
 
     public String message3, message2, message1;
-    public int soundIndex, messageTimerLength, secondaryTimerLength;
+    public int soundIndex, messageTimerLength;
+    public boolean stationaryDebuff = false;
 
-    protected int worldX, worldY, width, height;
+    protected int worldX, worldY;
 
-    public OBJ() {
-        width = Util.tileSize;
-        height = Util.tileSize;
-    }
-
-    public OBJ(int w, int h) {
-        width = w;
-        height = h;
+    public static BufferedImage getObjectIcon(String name, int width, int height) {
+        try {
+            return Util.scaleImage(ImageIO.read(Objects.requireNonNull(OBJ.class.getResourceAsStream("/objects/"+name+".png"))), width, height);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

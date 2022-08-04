@@ -19,6 +19,7 @@ public class NpcManager {
     public void reloadNPCs(MapHandler mapH) {
         Arrays.fill(NPCs, null);
 
+        // Loads NPCs for mapIsland
         if (mapH == MapHandler.mapIsland) {
             NPC roy = new NPC_Roy(gp);
             roy.worldX = 31 * Util.tileSize;
@@ -29,6 +30,7 @@ public class NpcManager {
     }
 
     public void draw(Graphics2D g2d) {
+        // Draws all NPCs in view of player
         for (Entity npc : NPCs) {
             if (npc != null) {
                 npc.screenX = npc.worldX - gp.player.worldX + gp.player.screenX;

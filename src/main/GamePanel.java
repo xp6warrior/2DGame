@@ -1,9 +1,8 @@
 package main;
 
-import entity.Entity;
+import entity.Player;
 import entity.npc.NPC;
 import entity.npc.NpcManager;
-import entity.Player;
 import handler.CollisionHandler;
 import handler.KeyHandler;
 import handler.SoundHandler;
@@ -14,18 +13,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
-
-    //// Game Settings
+    // Game Settings
     final int FPS = 60;
 
-    // Game States
+    // GameStates
     public final int titleState = -1;
     public final int playState = 0;
     public final int pauseState = 1;
-    public final int resumeState = 2;
     private int currentGameState = titleState;
 
-    //// Instantiate
+    // Instantiate
     Thread gameThread;
     public KeyHandler keyH = new KeyHandler(this);
     public CollisionHandler collisionH = new CollisionHandler(this);
@@ -37,9 +34,11 @@ public class GamePanel extends JPanel implements Runnable {
     public NpcManager npcHandler = new NpcManager(this);
     public Player player = new Player(this);
 
-    //// Debug
+    // Debug
     public long drawTime;
 
+
+    //// Constructor
     public GamePanel() {
         this.setPreferredSize(new Dimension(Util.windowX, Util.windowY));
         this.setBackground(Color.black);
@@ -53,56 +52,62 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
-    // GameState changing
+    //// Changing game-states
     public int getGameState() {
         return currentGameState;
     }
     public void setGameState(int state) {
+        // Before GameState change
         if (currentGameState == titleState) {
+            ui.displayTitleMenu = false;
             tileM.switchLevel("island");
         }
+
         currentGameState = state;
+
+        // After GameState change
+        switch (currentGameState) {
+            case playState: music.play(); music.loop(); ui.displayPauseMenu = false; break;
+            case pauseState: music.stop(); ui.displayPauseMenu = true; break;
+        }
     }
 
 
-    // Game Loop
+    //// Game loop
     @Override
     @SuppressWarnings("all")
     public void run() {
-        double timePerFrame = 1000000000d / FPS; // In nanoseconds
+        double timePerFrame = 1000000000d / FPS; // timePerFrame in nanoseconds
         double endFrameTime = System.nanoTime() + timePerFrame;
 
         while (gameThread != null) {
-
-            switch (currentGameState) {
-                case playState: update(); break;
-                case pauseState: music.stop(); break;
-                case resumeState: music.play(); music.loop(); currentGameState = playState; break;
+            // 1. Update
+            if (currentGameState == playState) {
+                update();
             }
-
+            // 2. Repaint
             repaint();
 
-            // Step 3: Maintain stable FPS
+            // 3. Maintain FPS
             try {
-                double remainingTime = endFrameTime - System.nanoTime();
-                remainingTime = remainingTime / 1000000; // Change to milliseconds
-
+                double remainingTime = (endFrameTime - System.nanoTime()) / 1000000; // Change to milliseconds
                 if (remainingTime < 0) {
                     remainingTime = 0;
                 }
 
                 Thread.sleep((long) remainingTime);
-
                 endFrameTime += timePerFrame;
 
             } catch (InterruptedException e) {e.printStackTrace();}
         }
     }
 
-    // Update and Draw methods
+    //// Update and Draw
     private void update() {
+        // 1. Player
         player.update();
 
+        // 2. NPCs
         for (NPC npc : npcHandler.NPCs) {
             if (npc != null) {
                 npc.update();

@@ -1,10 +1,11 @@
 package handler;
 
 public enum MapHandler {
-    mapAlpha("/maps/mapAlpha.txt", 16, 12, 7, 6, "frost", -1),
+    mapAlpha("/maps/mapAlpha.txt", 16, 12, 7, 6, "dungeon", -1),
     mapIsland("/maps/mapIsland.txt", 48, 42, 9, 22, "alpha", 0),
-    testMap("/maps/testMap.txt", 16, 12, 0, 0, "alpha", -1),
-    titleMap("/maps/titleMap.txt", 21, 13, 6, 10, "alpha", -1);
+    testMap("/maps/testMap.txt", 16, 12, 0, 0, "dungeon", -1),
+    titleMap("/maps/titleMap.txt", 21, 13, 6, 10, "frost", -1),
+    mapDungeon("/maps/mapDungeon.txt", 50, 50, 9, 20, "dungeon", -1);
 
     public String path;
     public int rows;

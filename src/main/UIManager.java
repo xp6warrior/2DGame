@@ -19,9 +19,7 @@ public class UIManager {
     private final BufferedImage bronzeDoor;
     private final BufferedImage sign;
     private final BufferedImage stairs;
-
     private final BufferedImage roy;
-
     private final BufferedImage titleScreenKey;
 
     public UIManager(GamePanel gp) {
@@ -33,25 +31,14 @@ public class UIManager {
         bronzeDoor = OBJ.getObjectIcon("bronzeDoor", 90, 90);
         sign = OBJ.getObjectIcon("sign", 100, 100);
         stairs = OBJ.getObjectIcon("stairs", 90, 90);
-
         roy = NPC.getNPCIcon("roy", 90, 90);
-
         titleScreenKey = OBJ.getObjectIcon("goldKey", 150, 150);
     }
 
 
-    private void displayHeldItem(Graphics2D g2d) {
-        if (gp.player.goldKey) {
-            g2d.drawImage(goldKey, Util.windowX - 100 - 10, Util.windowY - 100 - 10, null);
-        }
-        if (gp.player.bronzeKey) {
-            g2d.drawImage(bronzeKey, Util.windowX - 100 - 10, Util.windowY - 100 - 10, null);
-        }
-    }
-
     private String message;
     private BufferedImage img;
-    public int timer;
+    private int timer;
     private int timerLength = 0;
     public boolean displayTouchingObject = false;
     public void setTouching(OBJ object, int msgIndex) {
@@ -97,6 +84,15 @@ public class UIManager {
             displayTouchingObject = false;
         }
 
+    }
+
+    private void displayHeldItem(Graphics2D g2d) {
+        if (gp.player.goldKey) {
+            g2d.drawImage(goldKey, Util.windowX - 100 - 10, Util.windowY - 100 - 10, null);
+        }
+        if (gp.player.bronzeKey) {
+            g2d.drawImage(bronzeKey, Util.windowX - 100 - 10, Util.windowY - 100 - 10, null);
+        }
     }
 
     public boolean displayPauseMenu = false;

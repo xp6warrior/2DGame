@@ -26,7 +26,7 @@ public class TileManager {
     public void switchLevel(String level) {
         switch (level) {
             case "title": mapH = MapHandler.titleMap; break;
-            case "island": mapH = MapHandler.mapIsland; break;
+            case "island": mapH = MapHandler.mapDungeon; break;
             case "alpha": mapH = MapHandler.mapAlpha; break;
         }
 
@@ -49,13 +49,14 @@ public class TileManager {
     }
 
 
-    private TSET loadTileSet(String name) {
-        TSET tileset = null;
+    private SET loadTileSet(String name) {
+        SET tileset = null;
 
         // Step 2: Gets the map's tileset
         switch (name) {
-            case "alpha": tileset = new TSET_Alpha(); break;
-            case "frost": tileset = new TSET_Frost(); break;
+            case "alpha": tileset = new SET_Alpha(); break;
+            case "frost": tileset = new SET_Frost(); break;
+            case "dungeon": tileset = new SET_Dungeon(); break;
         }
 
         return tileset;

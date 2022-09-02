@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
+import java.util.Random;
 
 public class TileManager {
     public Tile[] tileSet;
@@ -19,15 +20,19 @@ public class TileManager {
     private final GamePanel gp;
     private MapHandler mapH;
 
+    private final Random random = new Random();
+    private boolean frost = false;
+
     public TileManager(GamePanel gp) {
         this.gp = gp;
     }
 
     public void switchLevel(String level) {
         switch (level) {
-            case "title": mapH = MapHandler.titleMap; break;
-            case "island": mapH = MapHandler.mapDungeon; break;
             case "alpha": mapH = MapHandler.mapAlpha; break;
+            case "title": mapH = MapHandler.titleMap; break;
+            case "island": mapH = MapHandler.mapIsland; break;
+            case "dungeon": mapH = MapHandler.mapDungeon; break;
         }
 
         gp.player.worldX = mapH.startColumn * Util.tileSize;
@@ -44,7 +49,23 @@ public class TileManager {
         }
 
         mapInfo = new int[mapH.columns][mapH.rows];
-        tileSet = loadTileSet(mapH.tileSetName).tileArray;
+
+        // 30% chance title and island will be frost
+        int snowChance;
+        String tileSetName = mapH.tileSetName;
+        if (level.equals("title")) {
+            snowChance = random.nextInt(99);
+            if (snowChance < 29) {
+                tileSetName = "frost";
+                frost = true;
+            }
+        }
+
+        if (level.equals("island") && frost) {
+            tileSetName = "frost";
+        }
+
+        tileSet = loadTileSet(tileSetName).tileArray;
         loadMap(mapH.path);
     }
 

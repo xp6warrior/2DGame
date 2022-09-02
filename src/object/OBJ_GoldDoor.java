@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class OBJ_GoldDoor extends OBJ {
-    public OBJ_GoldDoor() {
+    public OBJ_GoldDoor(String variant) {
         name = "goldDoor";
+        this.variant = variant;
         collision = true;
 
         message3 = "Requires a Golden key!";
@@ -18,6 +19,6 @@ public class OBJ_GoldDoor extends OBJ {
 
         soundIndex = 2;
 
-        image = getObjectIcon(name, Util.tileSize, Util.tileSize);
+        image = getObjectIcon(name, Util.tileSize, Util.tileSize, variant);
     }
 }

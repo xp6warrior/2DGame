@@ -1,7 +1,12 @@
 package main;
 
+import tile.Tile;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 public abstract class Util {
     //// Window Settings
@@ -31,5 +36,17 @@ public abstract class Util {
         int x = Util.windowX / 2 - stringLength / 2;
         int y = Util.windowY / 2 + stringHeight / 2;
         return new int[]{x, y};
+    }
+
+    public static void loadAnimatedTile(Tile tile, String tilePath) {
+        try {
+            tile.image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(Util.class.getResourceAsStream(tilePath + "_1.png"))), Util.tileSize, Util.tileSize);
+            tile.animationFrames = new BufferedImage[3];
+            tile.animationFrames[0] = Util.scaleImage(ImageIO.read(Objects.requireNonNull(Util.class.getResourceAsStream(tilePath + "_2.png"))), Util.tileSize, Util.tileSize);
+            tile.animationFrames[1] = Util.scaleImage(ImageIO.read(Objects.requireNonNull(Util.class.getResourceAsStream(tilePath + "_3.png"))), Util.tileSize, Util.tileSize);
+            tile.animationFrames[2] = Util.scaleImage(ImageIO.read(Objects.requireNonNull(Util.class.getResourceAsStream(tilePath + "_4.png"))), Util.tileSize, Util.tileSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

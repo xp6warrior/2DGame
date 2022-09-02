@@ -10,6 +10,7 @@ import java.util.Objects;
 
 public abstract class OBJ {
     public String name;
+    public String variant;
     public boolean collision = false;
     public Rectangle solidArea = new Rectangle(0, 0, Util.tileSize, Util.tileSize);
     public BufferedImage image;
@@ -20,9 +21,9 @@ public abstract class OBJ {
 
     protected int worldX, worldY;
 
-    public static BufferedImage getObjectIcon(String name, int width, int height) {
+    public static BufferedImage getObjectIcon(String name, int width, int height, String variant) {
         try {
-            return Util.scaleImage(ImageIO.read(Objects.requireNonNull(OBJ.class.getResourceAsStream("/objects/"+name+".png"))), width, height);
+            return Util.scaleImage(ImageIO.read(Objects.requireNonNull(OBJ.class.getResourceAsStream("/objects/"+variant+"/"+name+".png"))), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }

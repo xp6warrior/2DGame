@@ -33,21 +33,21 @@ public class ObjectManager {
             goldKey.solidArea.y = goldKey.worldY;
             objects[1] = goldKey;
 
-            OBJ goldDoor = new OBJ_GoldDoor();
+            OBJ goldDoor = new OBJ_GoldDoor("normal");
             goldDoor.worldX = 16 * Util.tileSize;
             goldDoor.worldY = 11 * Util.tileSize;
             goldDoor.solidArea.x = goldDoor.worldX;
             goldDoor.solidArea.y = goldDoor.worldY;
             objects[2] = goldDoor;
 
-            OBJ bronzeDoor = new OBJ_BronzeDoor();
+            OBJ bronzeDoor = new OBJ_BronzeDoor("normal");
             bronzeDoor.worldX = 32 * Util.tileSize;
             bronzeDoor.worldY = 29 * Util.tileSize;
             bronzeDoor.solidArea.x = bronzeDoor.worldX;
             bronzeDoor.solidArea.y = bronzeDoor.worldY;
             objects[3] = bronzeDoor;
 
-            OBJ sign = new OBJ_Sign();
+            OBJ sign = new OBJ_Sign("normal");
             sign.worldX = 20 * Util.tileSize;
             sign.worldY = 12 * Util.tileSize;
             sign.solidArea.x = sign.worldX;
@@ -62,7 +62,7 @@ public class ObjectManager {
             stairs.solidArea.y = stairs.worldY;
             objects[5] = stairs;
 
-            OBJ sign2 = new OBJ_Sign();
+            OBJ sign2 = new OBJ_Sign("normal");
             sign2.worldX = 31 * Util.tileSize;
             sign2.worldY = 27 * Util.tileSize;
             sign2.solidArea.x = sign2.worldX;
@@ -70,6 +70,31 @@ public class ObjectManager {
             sign2.message1 = OBJ_Sign.writings[1];
             objects[6] = sign2;
 
+        }
+
+        if (mapH == MapHandler.mapDungeon) {
+            OBJ sign = new OBJ_Sign("dungeon");
+            sign.worldX = 23 * Util.tileSize;
+            sign.worldY = 9 * Util.tileSize;
+            sign.solidArea.x = sign.worldX;
+            sign.solidArea.y = sign.worldY;
+            sign.message1 = OBJ_Sign.writings[2];
+            objects[0] = sign;
+
+            OBJ sign2 = new OBJ_Sign("dungeon");
+            sign2.worldX = 27 * Util.tileSize;
+            sign2.worldY = 9 * Util.tileSize;
+            sign2.solidArea.x = sign2.worldX;
+            sign2.solidArea.y = sign2.worldY;
+            sign2.message1 = OBJ_Sign.writings[3];
+            objects[1] = sign2;
+
+            OBJ bronzeDoor = new OBJ_BronzeDoor("dungeon");
+            bronzeDoor.worldX = 33 * Util.tileSize;
+            bronzeDoor.worldY = 10 * Util.tileSize;
+            bronzeDoor.solidArea.x = bronzeDoor.worldX;
+            bronzeDoor.solidArea.y = bronzeDoor.worldY;
+            objects[2] = bronzeDoor;
         }
     }
 

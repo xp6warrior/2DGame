@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class OBJ_BronzeDoor extends OBJ {
-    public OBJ_BronzeDoor() {
+    public OBJ_BronzeDoor(String variant) {
         name = "bronzeDoor";
+        this.variant = variant;
         collision = true;
 
         message3 = "Requires a Bronze key!";
@@ -18,6 +19,6 @@ public class OBJ_BronzeDoor extends OBJ {
 
         soundIndex = 2;
 
-        image = getObjectIcon(name, Util.tileSize, Util.tileSize);
+        image = getObjectIcon(name, Util.tileSize, Util.tileSize, variant);
     }
 }

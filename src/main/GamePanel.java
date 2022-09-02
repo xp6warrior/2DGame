@@ -62,7 +62,6 @@ public class GamePanel extends JPanel implements Runnable {
             ui.displayTitleMenu = false;
             tileM.switchLevel("island");
         }
-
         currentGameState = state;
 
         // After GameState change

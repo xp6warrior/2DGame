@@ -9,6 +9,7 @@ import java.util.Objects;
 public class OBJ_Stairs extends OBJ {
     public OBJ_Stairs() {
         name = "stairs";
+        variant = "normal";
 
         message2 = "Roy's Basement...";
         message1 = "";
@@ -16,6 +17,6 @@ public class OBJ_Stairs extends OBJ {
 
         soundIndex = 2;
 
-        image = getObjectIcon(name, Util.tileSize, Util.tileSize);
+        image = getObjectIcon(name, Util.tileSize, Util.tileSize, variant);
     }
 }

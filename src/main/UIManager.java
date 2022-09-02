@@ -21,18 +21,24 @@ public class UIManager {
     private final BufferedImage stairs;
     private final BufferedImage roy;
     private final BufferedImage titleScreenKey;
+    private final BufferedImage bronzeDoorD;
+    private final BufferedImage goldDoorD;
+    private final BufferedImage signD;
 
     public UIManager(GamePanel gp) {
         this.gp = gp;
 
-        goldKey = OBJ.getObjectIcon("goldKey", 100, 100);
-        bronzeKey = OBJ.getObjectIcon("bronzeKey", 100, 100);
-        goldDoor = OBJ.getObjectIcon("goldDoor", 90, 90);
-        bronzeDoor = OBJ.getObjectIcon("bronzeDoor", 90, 90);
-        sign = OBJ.getObjectIcon("sign", 100, 100);
-        stairs = OBJ.getObjectIcon("stairs", 90, 90);
+        goldKey = OBJ.getObjectIcon("goldKey", 100, 100, "normal");
+        bronzeKey = OBJ.getObjectIcon("bronzeKey", 100, 100, "normal");
+        goldDoor = OBJ.getObjectIcon("goldDoor", 90, 90, "normal");
+        bronzeDoor = OBJ.getObjectIcon("bronzeDoor", 90, 90, "normal");
+        sign = OBJ.getObjectIcon("sign", 100, 100, "normal");
+        goldDoorD = OBJ.getObjectIcon("goldDoor", 90, 90, "dungeon");
+        bronzeDoorD = OBJ.getObjectIcon("bronzeDoor", 90, 90, "dungeon");
+        signD = OBJ.getObjectIcon("sign", 100, 100, "dungeon");
+        stairs = OBJ.getObjectIcon("stairs", 90, 90, "normal");
         roy = NPC.getNPCIcon("roy", 90, 90);
-        titleScreenKey = OBJ.getObjectIcon("goldKey", 150, 150);
+        titleScreenKey = OBJ.getObjectIcon("goldKey", 150, 150, "normal");
     }
 
 
@@ -43,11 +49,11 @@ public class UIManager {
     public boolean displayTouchingObject = false;
     public void setTouching(OBJ object, int msgIndex) {
         switch (object.name) {
-            case "goldDoor": img = goldDoor; break;
+            case "goldDoor": if (object.variant.equals("dungeon")) {img = goldDoorD;} else {img = goldDoor;} break;
             case "goldKey": img = goldKey; break;
-            case "bronzeDoor": img = bronzeDoor; break;
+            case "bronzeDoor": if (object.variant.equals("dungeon")) {img = bronzeDoorD;} else {img = bronzeDoor;} break;
             case "bronzeKey": img = bronzeKey; break;
-            case "sign": img = sign; break;
+            case "sign": if (object.variant.equals("dungeon")) {img = signD;} else {img = sign;} break;
             case "stairs": img = stairs; break;
         }
 

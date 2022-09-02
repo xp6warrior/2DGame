@@ -129,7 +129,7 @@ public class Player extends Entity {
 
                 case "stairs":
                     if (keyH.interact) {
-                        gp.tileM.switchLevel("alpha");
+                        gp.tileM.switchLevel("dungeon");
                         messageIndex = 1;
                     } else { messageIndex = 2; }
                     break;

@@ -9,7 +9,7 @@ import java.util.Objects;
 public class OBJ_Stairs extends OBJ {
     public OBJ_Stairs() {
         name = "stairs";
-        variant = "normal";
+        variant = "";
 
         message2 = "Roy's Basement...";
         message1 = "";

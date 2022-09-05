@@ -24,21 +24,33 @@ public class UIManager {
     private final BufferedImage bronzeDoorD;
     private final BufferedImage goldDoorD;
     private final BufferedImage signD;
+    private final BufferedImage signG;
+    private final BufferedImage signB;
+    private final BufferedImage signY;
+    private final BufferedImage signP;
 
     public UIManager(GamePanel gp) {
         this.gp = gp;
 
-        goldKey = OBJ.getObjectIcon("goldKey", 100, 100, "normal");
-        bronzeKey = OBJ.getObjectIcon("bronzeKey", 100, 100, "normal");
-        goldDoor = OBJ.getObjectIcon("goldDoor", 90, 90, "normal");
-        bronzeDoor = OBJ.getObjectIcon("bronzeDoor", 90, 90, "normal");
-        sign = OBJ.getObjectIcon("sign", 100, 100, "normal");
-        goldDoorD = OBJ.getObjectIcon("goldDoor", 90, 90, "dungeon");
-        bronzeDoorD = OBJ.getObjectIcon("bronzeDoor", 90, 90, "dungeon");
-        signD = OBJ.getObjectIcon("sign", 100, 100, "dungeon");
-        stairs = OBJ.getObjectIcon("stairs", 90, 90, "normal");
+        goldKey = OBJ.getObjectIcon("goldKey", 100, 100, "");
+        bronzeKey = OBJ.getObjectIcon("bronzeKey", 100, 100, "");
+        sign = OBJ.getObjectIcon("sign", 100, 100, "");
+        signD = OBJ.getObjectIcon("sign", 100, 100, "D");
+
+        goldDoor = OBJ.getObjectIcon("goldDoor", 90, 90, "");
+        goldDoorD = OBJ.getObjectIcon("goldDoor", 90, 90, "D");
+        bronzeDoor = OBJ.getObjectIcon("bronzeDoor", 90, 90, "");
+        bronzeDoorD = OBJ.getObjectIcon("bronzeDoor", 90, 90, "D");
+        stairs = OBJ.getObjectIcon("stairs", 90, 90, "");
+
+        signG = OBJ.getObjectIcon("sign", 90, 90, "G");
+        signB = OBJ.getObjectIcon("sign", 90, 90, "B");
+        signY = OBJ.getObjectIcon("sign", 90, 90, "Y");
+        signP = OBJ.getObjectIcon("sign", 90, 90, "P");
+
         roy = NPC.getNPCIcon("roy", 90, 90);
-        titleScreenKey = OBJ.getObjectIcon("goldKey", 150, 150, "normal");
+
+        titleScreenKey = OBJ.getObjectIcon("goldKey", 150, 150, "");
     }
 
 
@@ -49,11 +61,19 @@ public class UIManager {
     public boolean displayTouchingObject = false;
     public void setTouching(OBJ object, int msgIndex) {
         switch (object.name) {
-            case "goldDoor": if (object.variant.equals("dungeon")) {img = goldDoorD;} else {img = goldDoor;} break;
+            case "goldDoor": if (object.variant.equals("D")) {img = goldDoorD;} else {img = goldDoor;} break;
             case "goldKey": img = goldKey; break;
-            case "bronzeDoor": if (object.variant.equals("dungeon")) {img = bronzeDoorD;} else {img = bronzeDoor;} break;
+            case "bronzeDoor": if (object.variant.equals("D")) {img = bronzeDoorD;} else {img = bronzeDoor;} break;
             case "bronzeKey": img = bronzeKey; break;
-            case "sign": if (object.variant.equals("dungeon")) {img = signD;} else {img = sign;} break;
+            case "sign":
+                switch (object.variant) {
+                    case "": img = sign; break;
+                    case "D": img = signD; break;
+                    case "G": img = signG; break;
+                    case "B": img = signB; break;
+                    case "Y": img = signY; break;
+                    case "P": img = signP; break;
+                } break;
             case "stairs": img = stairs; break;
         }
 

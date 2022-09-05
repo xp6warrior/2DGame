@@ -10,7 +10,7 @@ public class SET_Dungeon extends SET {
 
     public SET_Dungeon() {
         path = "/tiles/tilesetDungeon/";
-        initialise(4);
+        initialise(5);
 
         Util.loadAnimatedTile(tileArray[5], path + "liquid1");
         tileArray[5].collision = true;
@@ -24,6 +24,9 @@ public class SET_Dungeon extends SET {
 
             tileArray[8].image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(path + "wall4.png"))), Util.tileSize, Util.tileSize);
             tileArray[8].collision = true;
+
+            tileArray[9].image = Util.scaleImage(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(path + "obstacle2.png"))), Util.tileSize, Util.tileSize);
+            tileArray[9].collision = true;
         } catch (IOException e) {
             e.printStackTrace();
         }

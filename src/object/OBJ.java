@@ -23,7 +23,7 @@ public abstract class OBJ {
 
     public static BufferedImage getObjectIcon(String name, int width, int height, String variant) {
         try {
-            return Util.scaleImage(ImageIO.read(Objects.requireNonNull(OBJ.class.getResourceAsStream("/objects/"+variant+"/"+name+".png"))), width, height);
+            return Util.scaleImage(ImageIO.read(Objects.requireNonNull(OBJ.class.getResourceAsStream("/objects/"+ name + variant +".png"))), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }

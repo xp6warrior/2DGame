@@ -9,7 +9,7 @@ import java.util.Objects;
 public class OBJ_BronzeKey extends OBJ {
     public OBJ_BronzeKey() {
         name = "bronzeKey";
-        variant = "normal";
+        variant = "";
         message1 = "Found a Bronze Key!";
         messageTimerLength = 50;
 

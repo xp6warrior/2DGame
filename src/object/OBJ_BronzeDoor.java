@@ -2,10 +2,6 @@ package object;
 
 import main.Util;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
-import java.util.Objects;
-
 public class OBJ_BronzeDoor extends OBJ {
     public OBJ_BronzeDoor(String variant) {
         name = "bronzeDoor";

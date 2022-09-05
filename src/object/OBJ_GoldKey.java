@@ -9,7 +9,7 @@ import java.util.Objects;
 public class OBJ_GoldKey extends OBJ {
     public OBJ_GoldKey() {
         name = "goldKey";
-        variant = "normal";
+        variant = "";
         message1 = "Found a Golden Key!";
         messageTimerLength = 50;
 
